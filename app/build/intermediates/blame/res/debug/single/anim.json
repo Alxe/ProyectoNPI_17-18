@@ -1,0 +1,82 @@
+[
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_fade_out.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_fade_out.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_popup_exit.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_out_bottom.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_slide_out_bottom.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_grow_fade_in_from_bottom.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_fade_in.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_popup_enter.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_in_top.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_in_bottom.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_out_top.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_popup_enter.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_in_bottom.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_slide_in_bottom.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_out_top.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_grow_fade_in_from_bottom.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_popup_exit.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_shrink_fade_out_from_bottom.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_shrink_fade_out_from_bottom.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/zoraida/Desktop/Proyectos Android/ConversationalInterface/chapter6/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_in_top.xml",
+        "source": "/Users/zoraida/.android/build-cache/9c58dad154d6fec4ff5defeb05db85a8301e8bd3/output/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_slide_out_bottom.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_slide_out_bottom.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_fade_in.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "/home/alejnp/Downloads/TalkBack/app/build/intermediates/res/merged/debug/anim/abc_fade_out.xml",
+        "source": "/home/alejnp/.android/build-cache/79ac85988e362f857e82ac325a9275dc7fde8399/output/res/anim/abc_fade_out.xml"
+    }
+]
