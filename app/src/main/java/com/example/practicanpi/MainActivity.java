@@ -12,8 +12,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import ai.api.GsonFactory;
 import ai.api.android.AIConfiguration;
 import ai.api.model.AIError;
 import ai.api.model.AIResponse;
@@ -21,7 +25,10 @@ import ai.api.ui.AIDialog;
 
 public class MainActivity extends AppCompatActivity implements AIDialog.AIDialogListener {
 
+    private Gson gson = new GsonFactory().getGson();
+
     private AIDialog aiDialog;
+    private TextView textView;
 
     private boolean checkAndRequestRecordAudioPermission() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO)
@@ -48,11 +55,13 @@ public class MainActivity extends AppCompatActivity implements AIDialog.AIDialog
         setSupportActionBar(toolbar);
 
         final AIConfiguration config = new AIConfiguration("1973329acf964ea48e5d08e04d2c08a0",
-                AIConfiguration.SupportedLanguages.English,
+                AIConfiguration.SupportedLanguages.Spanish,
                 AIConfiguration.RecognitionEngine.System);
 
         aiDialog = new AIDialog(this, config);
         aiDialog.setResultsListener(this);
+
+        textView = findViewById(R.id.main_text_helloworld);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -87,8 +96,15 @@ public class MainActivity extends AppCompatActivity implements AIDialog.AIDialog
 
     @Override
     public void onResult(AIResponse result) {
-        Toast.makeText(null, "Result recieved", Toast.LENGTH_LONG)
-            .show();
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText(getApplicationContext(), "Result recieved", Toast.LENGTH_LONG)
+//                        .show();
+//            }
+//        });
+
+        textView.setText(result.getResult().getFulfillment().getSpeech());
     }
 
     @Override
