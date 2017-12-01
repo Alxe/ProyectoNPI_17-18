@@ -5,6 +5,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,11 +26,13 @@ import ai.api.model.AIResponse;
 import ai.api.ui.AIDialog;
 
 public class MainActivity extends AppCompatActivity implements AIDialog.AIDialogListener {
-
     private Gson gson = new GsonFactory().getGson();
 
     private AIDialog aiDialog;
     private TextView textView;
+
+    private DialogInputFragment dialogInputFragment;
+    private DialogResponseFragment dialogResponseFragment;
 
     private boolean checkAndRequestRecordAudioPermission() {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO)
@@ -51,9 +55,17 @@ public class MainActivity extends AppCompatActivity implements AIDialog.AIDialog
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // Toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Fragments
+        FragmentManager fm = getSupportFragmentManager();
+        dialogInputFragment = (DialogInputFragment) fm.findFragmentById(R.id.fragment_dialog_input);
+        dialogResponseFragment = (DialogResponseFragment) fm.findFragmentById(R.id.fragment_dialog_response);
+
+        // API.ai (Dialogflow)
         final AIConfiguration config = new AIConfiguration("1973329acf964ea48e5d08e04d2c08a0",
                 AIConfiguration.SupportedLanguages.Spanish,
                 AIConfiguration.RecognitionEngine.System);
@@ -61,9 +73,8 @@ public class MainActivity extends AppCompatActivity implements AIDialog.AIDialog
         aiDialog = new AIDialog(this, config);
         aiDialog.setResultsListener(this);
 
-        textView = findViewById(R.id.main_text_helloworld);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        // FAB (Floating Action Button)
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -95,16 +106,15 @@ public class MainActivity extends AppCompatActivity implements AIDialog.AIDialog
     }
 
     @Override
-    public void onResult(AIResponse result) {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Toast.makeText(getApplicationContext(), "Result recieved", Toast.LENGTH_LONG)
-//                        .show();
-//            }
-//        });
+    public void onResult(final                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      AIResponse response) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final String responseText = response.getResult().getFulfillment().getSpeech();
 
-        textView.setText(result.getResult().getFulfillment().getSpeech());
+                dialogResponseFragment.setText(responseText);
+            }
+        });
     }
 
     @Override
