@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.practicanpi.MainActivity">
+    tools:context="com.example.practicanpi.IndexActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,25 +17,16 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/main_button_es"
+            android:id="@+id/index_button_voice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/language_es" />
+            android:text="@string/index_voice" />
 
         <Button
-            android:id="@+id/main_button_en"
+            android:id="@+id/index_button_sensors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/language_en" />
-
-        <!--
-        <Button
-            android:id="@+id/main_button_fr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/language_fr"/>
-        -->
+            android:text="@string/index_sensors" />
     </LinearLayout>
-
 
 </android.support.constraint.ConstraintLayout>

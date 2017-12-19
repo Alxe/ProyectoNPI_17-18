@@ -95,4 +95,17 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="language_es">Español</string>
+    <string name="language_en">English</string>
+    <string name="index_voice">Módulo Oral</string>
+    <string name="index_sensors">Módulo de Sensores</string>
+
+    <!-- TODO: Asegurarse que estas entradas no son necesarias (implementar dinamismo de DialogFlow (no contemplado) -->
+    <string name="dialog_input_fragment_item0">¡Hola!</string>
+    <string name="dialog_input_fragment_item1">¿Qué tal?</string>
+    <string name="dialog_input_fragment_item2">¿A qué te dedicas?</string>
+    <string name="dialog_input_fragment_item3">¿Dónde vives?</string>
+    <string name="dialog_input_fragment_item4">¿Qué puedes contarme sobre la época?</string>
+    <string name="need_mic_permission">Need microphone to record</string>
 </resources>
