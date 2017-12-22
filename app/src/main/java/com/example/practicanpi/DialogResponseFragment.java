@@ -41,25 +41,6 @@ public class DialogResponseFragment extends Fragment implements AIDialog.AIDialo
 
         // TTS
         tts = new TextToSpeech(getActivity(), this);
-        tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-            @Override
-            public void onStart(String utteranceId) {
-                Log.v(DialogResponseFragment.class.getSimpleName(),
-                        String.format("TTS onStart"));
-            }
-
-            @Override
-            public void onDone(String utteranceId) {
-                Log.v(DialogResponseFragment.class.getSimpleName(),
-                        String.format("TTS onDone"));
-            }
-
-            @Override
-            public void onError(String utteranceId) {
-                Log.v(DialogResponseFragment.class.getSimpleName(),
-                        String.format("TTS onError"));
-            }
-        });
 
         return v;
     }

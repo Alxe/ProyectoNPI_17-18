@@ -72,11 +72,7 @@ public class DialogActivity extends AppCompatActivity {
         dialogResponseFragment = (DialogResponseFragment) fm.findFragmentById(R.id.fragment_dialog_response);
 
         // API.ai (Dialogflow)
-        final AIConfiguration aiConfig = new AIConfiguration(
-            app.getAiToken(),
-            app.getAiLanguage(),
-            AIConfiguration.RecognitionEngine.System
-        );
+        final AIConfiguration aiConfig = app.getAiConfig();
         aiDialog = new AIDialog(DialogActivity.this, aiConfig);
         aiDialog.setResultsListener(dialogResponseFragment);
 

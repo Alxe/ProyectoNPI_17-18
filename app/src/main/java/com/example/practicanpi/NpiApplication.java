@@ -9,7 +9,7 @@ import ai.api.android.AIConfiguration;
  */
 
 public class NpiApplication extends Application {
-    public final String aiToken = "1973329acf964ea48e5d08e04d2c08a0";
+    private final String aiToken = "1973329acf964ea48e5d08e04d2c08a0";
 
     private AIConfiguration.SupportedLanguages aiLanguage;
 
@@ -21,7 +21,7 @@ public class NpiApplication extends Application {
         this.aiLanguage = aiLanguage;
     }
 
-    public String getAiToken() {
-        return aiToken;
+    public AIConfiguration getAiConfig() {
+        return new AIConfiguration(aiToken, getAiLanguage(), AIConfiguration.RecognitionEngine.System);
     }
 }
