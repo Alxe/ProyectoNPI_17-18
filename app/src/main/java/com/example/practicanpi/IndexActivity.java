@@ -24,7 +24,8 @@ public class IndexActivity extends AppCompatActivity {
         findViewById(R.id.index_button_sensors).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(), "NOT YET IMPLEMENTED", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getBaseContext(), SensorActivity.class);
+                startActivity(intent);
             }
         });
     }

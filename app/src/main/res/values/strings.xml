@@ -108,4 +108,21 @@
     <string name="dialog_input_fragment_item3">¿Dónde vives?</string>
     <string name="dialog_input_fragment_item4">¿Qué puedes contarme sobre la época?</string>
     <string name="need_mic_permission">Need microphone to record</string>
+
+    <!-- Sensores -->
+    <string name="hola_mundo">Hola Mundo</string>
+
+    <string name="scan_barcode_button">Escanear QR</string>
+    <string name="no_barcode_captured">QR no detectado</string>
+
+    <string name="barcode_error_format">"Error leyendo QR: %1$s"</string>
+
+    <!-- Strings related to barcode scanner -->
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">QR detector cannot be downloaded due to low device storage</string>
+    <string name="lorem_ipsum">Lorem ipsum</string>
+    <string name="leer_qr">Leer QR</string>
+    <!-- End Sensores -->
 </resources>
