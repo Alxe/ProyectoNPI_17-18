@@ -6,36 +6,39 @@
     android:layout_height="match_parent"
     tools:context="com.example.practicanpi.MainActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/main_button_es"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/language_es" />
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/main_button_en"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/language_en" />
+            <ImageButton
+                android:id="@+id/main_button_es"
+                android:src="@drawable/flag_es"
+                android:scaleType="centerCrop"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/language_es" />
 
-        <!--
-        <Button
-            android:id="@+id/main_button_fr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/language_fr"/>
-        -->
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/main_button_en"
+                android:src="@drawable/flag_uk"
+                android:scaleType="centerCrop"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/language_en" />
+        </LinearLayout>
+    </ScrollView>
 
 
 </android.support.constraint.ConstraintLayout>

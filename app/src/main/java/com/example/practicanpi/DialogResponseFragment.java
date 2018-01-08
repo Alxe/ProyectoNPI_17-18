@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.speech.tts.Voice;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,7 +41,15 @@ public class DialogResponseFragment extends Fragment implements AIDialog.AIDialo
         responseText = v.findViewById(R.id.dialog_response_text);
 
         // TTS
-        tts = new TextToSpeech(getActivity(), this);
+        tts = new TextToSpeech(getActivity(), this, "com.google.android.tts");
+
+        // Can't do: API level doesn't allow it (need API level 21)
+       /* for(Voice v : tts.getVoices()) {
+            if(v.getName().contains("male")) {
+                tts.setVoice(v);
+                break;
+            }
+        }*/
 
         return v;
     }

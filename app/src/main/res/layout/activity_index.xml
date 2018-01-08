@@ -20,12 +20,14 @@
             android:id="@+id/index_button_voice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/index_button_text_size"
             android:text="@string/index_voice" />
 
         <Button
             android:id="@+id/index_button_sensors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/index_button_text_size"
             android:text="@string/index_sensors" />
     </LinearLayout>
 

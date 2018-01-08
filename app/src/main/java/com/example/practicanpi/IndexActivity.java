@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-public class IndexActivity extends AppCompatActivity {
+public class IndexActivity extends NpiActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -28,7 +28,7 @@ import me.relex.circleindicator.CircleIndicator;
 import static android.util.Log.d;
 import static android.util.Log.i;
 
-public class SensorActivity extends AppCompatActivity  implements SensorEventListener {
+public class SensorActivity extends NpiActivity  implements SensorEventListener {
 
 
     private static final String TAG = "SensorActivity";

@@ -9,22 +9,15 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
-import ai.api.GsonFactory;
 import ai.api.android.AIConfiguration;
-import ai.api.model.AIError;
-import ai.api.model.AIResponse;
 import ai.api.ui.AIDialog;
 
-public class DialogActivity extends AppCompatActivity {
+public class DialogActivity extends NpiActivity {
     /**
      * Dialogo reuitilizable para contactar con Dialogflow
      */
@@ -59,9 +52,6 @@ public class DialogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dialog);
 
-        // Application
-        final NpiApplication app = (NpiApplication) getApplication();
-
         // Toolbar
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -72,7 +62,7 @@ public class DialogActivity extends AppCompatActivity {
         dialogResponseFragment = (DialogResponseFragment) fm.findFragmentById(R.id.fragment_dialog_response);
 
         // API.ai (Dialogflow)
-        final AIConfiguration aiConfig = app.getAiConfig();
+        final AIConfiguration aiConfig = AIProvider.getInstance().getAiConfig(this);
         aiDialog = new AIDialog(DialogActivity.this, aiConfig);
         aiDialog.setResultsListener(dialogResponseFragment);
 
