@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".DialogActivity"
     tools:showIn="@layout/activity_dialog"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layout_margin="32dp">
+    android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/dialog_response_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="@android:color/black"
+        android:padding="8dp"
         android:text="@string/dialog_response_label"/>
 
-    <TextView
-        android:id="@+id/dialog_response_text"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"/>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_below="@id/dialog_response_label">
+
+        <TextView
+            android:id="@+id/dialog_response_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="gravity"
+            android:gravity="center"/>
+        </ScrollView>
+</RelativeLayout>
