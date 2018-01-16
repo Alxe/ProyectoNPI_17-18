@@ -17,4 +17,10 @@
     <string name="no_camera_permission">The app needs camera permissions</string>
     <string name="low_storage_error">No room for QR detector download</string>
     <string name="leer_qr">Read QR</string>
+    <string name="cuadro">painting</string>
+    <string name="o1">vase</string>
+    <string name="o2">spear</string>
+    <string name="o3">fishing rod</string>
+    <string name="o4">shield</string>
+
 </resources>

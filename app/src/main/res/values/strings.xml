@@ -31,7 +31,15 @@
     <string name="low_storage_error">No hay espacio en memoria para descargar el detector QR</string>
     <string name="lorem_ipsum" translatable="false">Lorem ipsum</string>
     <string name="leer_qr">Leer QR</string>
+
+    <string name="o1">Jarron</string>
+    <string name="o2">Lanza</string>
+    <string name="o3">Caña</string>
+    <string name="o4">Escudo</string>
+
     <string name="prefs_key" translatable="false">npiPrefs</string>
     <string name="prefs_language_key" translatable="false">language</string>
+    <string name="empty">vacio</string>
+    <string name="cuadro">cuadro</string>
     <!-- End Sensores -->
 </resources>

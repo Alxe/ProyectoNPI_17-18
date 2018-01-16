@@ -14,16 +14,18 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-
-import me.relex.circleindicator.CircleIndicator;
+import java.util.List;
 
 import static android.util.Log.d;
 import static android.util.Log.i;
@@ -38,7 +40,8 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     private SensorManager sensorManager;
     private Button botonQr;
-
+    private GridView gridview;
+    private List<Integer> encontradosList;
     //QR
     private String token = "";
 
@@ -55,14 +58,26 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     private static final int SHAKE_THRESHOLD = 800;
     //
 
+    private  ImageAdapter adapter;
     //Audio
     MediaPlayer mp;
-    //SLIDE
-    private static ViewPager mPager;
-    private static int currentPage = 0;
-    private static final Integer[] TOY= {R.raw.i1,R.raw.i2,R.raw.i3,R.raw.i4};
-    private ArrayList<Integer> TOYNArray = new ArrayList<Integer>();
     //
+
+
+    private Integer[] mThumbIds = {
+            R.drawable.blank,
+            R.drawable.o1,
+            R.drawable.o2,
+            R.drawable.o3,
+            R.drawable.o4
+    };
+    private Integer[] mNameIds = {
+            R.string.empty,
+            R.string.o1,
+            R.string.o2,
+            R.string.o3,
+            R.string.o4
+    };
 
     DecimalFormat dosdecimales = new DecimalFormat("###.###");
 
@@ -79,7 +94,21 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         //
         //
         botonQr = findViewById(R.id.activarQR);
-        mPager = findViewById(R.id.pager);
+
+        gridview = (GridView) findViewById(R.id.gridview);
+        encontradosList = new ArrayList<Integer>();
+        //encontradosList.add(1);
+
+        adapter = (ImageAdapter) new ImageAdapter(this, encontradosList);
+        gridview.setAdapter(adapter);
+
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Toast.makeText(SensorActivity.this,"Objeto listo para entregar" ,Toast.LENGTH_LONG).show();
+            }
+        });
+
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -98,7 +127,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             //finish();
         }
         //
-        init();
     }
 
     protected void iniciarRecoQR(){
@@ -109,6 +137,11 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
         //sensorManager.registerListener((SensorEventListener) this, sensorManager.getDefaultSensor(Sensor.T),SensorManager.SENSOR_DELAY_NORMAL);
+
+    }
+
+    protected void cambiarView(){
+
 
     }
 
@@ -155,13 +188,13 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
                         if (Round(x, 4) > 10.0000) {
                             Log.d("sensor", " X Right axis: " + x);
-                            moveTo(currentPage-1);
+                            //moveTo(currentPage-1);
                             //mPager.setCurrentItem(currentPage, true);
                             //Toast.makeText(this, "Right shake detected", Toast.LENGTH_SHORT).show();
 
                         } else if (Round(x, 4) < -10.0000) {
                             Log.d("sensor", "X Left axis: " + x);
-                            moveTo(currentPage+1);
+                            //moveTo(currentPage+1);
 
                             //mPager.setCurrentItem(currentPage, true);
                            // Toast.makeText(this, "Left shake detected", Toast.LENGTH_SHORT).show();
@@ -207,8 +240,23 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                 Log.e("qr scanned:",result);
                 int res = Integer.parseInt(result);
 
-                moveTo(res);
-                Toast.makeText(getApplicationContext(),"Personaje " + result, Toast.LENGTH_SHORT).show();
+                if(res <= mNameIds.length && res > 0 ){
+                   if (!encontradosList.contains(res)) {
+                       encontradosList.add(res);
+                       adapter.update(encontradosList);
+                       //RES = CODIGO QR LEIDO
+                       //moveTo(res);
+
+                       Toast.makeText(getApplicationContext(), "Has encontrado un " + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
+
+                   }else {
+                       Toast.makeText(getApplicationContext(), "Ya tienes ese " + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
+                   }
+
+                   }else{
+                    Toast.makeText(getApplicationContext(),"Que has encontrado? eso no se que es ", Toast.LENGTH_SHORT).show();
+                }
+
             }
             if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), "Algo fue mal leyendo el QR!", Toast.LENGTH_SHORT).show();
@@ -267,30 +315,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         return (float)tmp/p;
     }
 
-    private void init() {
-        for(int i=0;i<TOY.length;i++)
-            TOYNArray.add(TOY[i]);
 
-        mPager.setAdapter(new SensorPageAdapter(SensorActivity.this,TOYNArray));
-        CircleIndicator indicator = findViewById(R.id.indicator);
-        indicator.setViewPager(mPager);
-        mPager.setCurrentItem(currentPage, true);
-        //mPager.setCurrentItem(currentPage++, true);
-
-    }
-
-    private void moveTo(int pos){
-        if((pos != currentPage) && pos < TOYNArray.size() && pos > -1 ){
-            if(mp!=null) {
-                mp.release();
-                mp = null;
-            }
-            currentPage = pos;
-            mPager.setCurrentItem(currentPage, true);
-            int aud = R.raw.a1 + pos;
-            reproduce(aud);
-        }
-    }
 
     @Override protected void onDestroy() {
         super.onDestroy();

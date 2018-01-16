@@ -25,19 +25,17 @@
             android:paddingBottom="48dp"
             >
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
+            <GridView
+                android:id="@+id/gridview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true" />
-
-            <me.relex.circleindicator.CircleIndicator
-                android:id="@+id/indicator"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_alignParentBottom="true"
-                android:visibility="visible" />
-            </RelativeLayout>
+                android:columnWidth="150dp"
+                android:gravity="center"
+                android:horizontalSpacing="10dp"
+                android:numColumns="auto_fit"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="10dp" />
+        </RelativeLayout>
 
 
     </RelativeLayout>

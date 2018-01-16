@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NPI.iml" filepath="$PROJECT_DIR$/NPI.iml" />
+      <module fileurl="file://C:\Users\soler\Desktop\NPI\nueva\ProyectoNPI_17-18\NPI.iml" filepath="C:\Users\soler\Desktop\NPI\nueva\ProyectoNPI_17-18\NPI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ProyectoNPI_17-18.iml" filepath="$PROJECT_DIR$/ProyectoNPI_17-18.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
