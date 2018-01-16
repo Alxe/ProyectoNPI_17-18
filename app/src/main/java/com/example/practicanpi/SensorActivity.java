@@ -69,14 +69,16 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             R.drawable.o1,
             R.drawable.o2,
             R.drawable.o3,
-            R.drawable.o4
+            R.drawable.o4,
+            R.drawable.cuadro
     };
     private Integer[] mNameIds = {
             R.string.empty,
             R.string.o1,
             R.string.o2,
             R.string.o3,
-            R.string.o4
+            R.string.o4,
+            R.string.cuadro
     };
 
     DecimalFormat dosdecimales = new DecimalFormat("###.###");
