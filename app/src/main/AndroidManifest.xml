@@ -27,6 +27,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SensorActivity" />
         <activity android:name=".ScannerUtility" />
+        <activity android:name=".SendObjectActivity" />
+
     </application>
 
 </manifest>

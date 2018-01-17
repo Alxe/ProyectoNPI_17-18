@@ -41,5 +41,13 @@
     <string name="prefs_language_key" translatable="false">language</string>
     <string name="empty">vacio</string>
     <string name="cuadro">cuadro</string>
+    <string name="Hasencontrado">Has encontrado un</string>
+    <string name="yatienes">Ya tienes ese</string>
+    <string name="valornovalido">Que has encontrado? eso no se que es</string>
+    <string name="qrfallido">Algo fue mal leyendo el QR!</string>
+    <string name="Objeto_Entregado">Objeto Entregado</string>
+    <string name="pulsasobreobjeto">Pulsa sobre un objeto para entregarlo</string>
+    <string name="objetoentregado">Objeto entregado!</string>
+    <string name="noNFC">NFC NOT supported on this device!</string>
     <!-- End Sensores -->
 </resources>

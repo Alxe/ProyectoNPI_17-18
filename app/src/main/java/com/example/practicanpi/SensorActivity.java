@@ -37,6 +37,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private static final int BARCODE_READER_REQUEST_CODE = 2;
+    private static final int SEND_OBJECT_RESULT = 3;
 
     private SensorManager sensorManager;
     private Button botonQr;
@@ -107,7 +108,14 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(SensorActivity.this,"Objeto listo para entregar" ,Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getBaseContext(), SendObjectActivity.class);
+                if(encontradosList.size()>position){
+                    intent.putExtra("objeto",encontradosList.get(position));
+                    startActivityForResult(intent,SEND_OBJECT_RESULT);
+                }else{
+                    Toast.makeText(SensorActivity.this, R.string.pulsasobreobjeto ,Toast.LENGTH_LONG).show();
+
+                }
             }
         });
 
@@ -125,7 +133,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         //NFC
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter==null){
-            Toast.makeText(this,"NFC NOT supported on this device!",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,R.string.noNFC,Toast.LENGTH_LONG).show();
             //finish();
         }
         //
@@ -240,28 +248,31 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             if(resultCode == RESULT_OK){
                 String result=data.getStringExtra("result");
                 Log.e("qr scanned:",result);
-                int res = Integer.parseInt(result);
-
-                if(res <= mNameIds.length && res > 0 ){
-                   if (!encontradosList.contains(res)) {
-                       encontradosList.add(res);
-                       adapter.update(encontradosList);
-                       //RES = CODIGO QR LEIDO
-                       //moveTo(res);
-
-                       Toast.makeText(getApplicationContext(), "Has encontrado un " + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
-
-                   }else {
-                       Toast.makeText(getApplicationContext(), "Ya tienes ese " + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
-                   }
-
-                   }else{
-                    Toast.makeText(getApplicationContext(),"Que has encontrado? eso no se que es ", Toast.LENGTH_SHORT).show();
+                int res;
+                try
+                {
+                    res = Integer.parseInt(result);
                 }
+                catch (NumberFormatException nfe)
+                {
+                    res = -1;
+                }
+
+                añadirObjeto(res);
 
             }
             if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(getApplicationContext(), "Algo fue mal leyendo el QR!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), com.example.practicanpi.R.string.qrfallido, Toast.LENGTH_SHORT).show();
+            }
+        }else if(requestCode == SEND_OBJECT_RESULT){
+            if(resultCode == RESULT_OK){
+                int objeto = data.getIntExtra("objeto",-1);
+                if(objeto != -1){
+                    encontradosList.remove(encontradosList.indexOf(objeto));
+                    adapter.update(encontradosList);
+                    Toast.makeText(getApplicationContext(), R.string.objetoentregado, Toast.LENGTH_SHORT).show();
+
+                }
             }
         }
     }
@@ -299,7 +310,8 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                     for (int i = 0; i < techList.length; i++) {
                         tagInfo += techList[i] + "\n ";
                     }
-
+                    Log.e(TAG, "tagInfo" + tagInfo);
+                    //Aqui añadirObjeto(codigo NFC)
                     //textViewInfo.setText(tagInfo);
                 }
             } else {
@@ -327,6 +339,24 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }
 
 
+    }
+
+    private void añadirObjeto(int res){
+        if(res <= mNameIds.length && res > 0 ){
+            if (!encontradosList.contains(res)) {
+                encontradosList.add(res);
+                adapter.update(encontradosList);
+                //RES = CODIGO QR LEIDO
+                //moveTo(res);
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.Hasencontrado) + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
+
+            }else {
+                Toast.makeText(getApplicationContext(), getString(R.string.yatienes) + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
+            }
+
+        }else{
+            Toast.makeText(getApplicationContext(),com.example.practicanpi.R.string.valornovalido, Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
