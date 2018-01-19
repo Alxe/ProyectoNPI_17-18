@@ -15,6 +15,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -30,6 +31,7 @@ import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +75,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     private SeekBar seekBar;
     private Handler handler;
     private AudioManager audioManager;
-    private boolean status = false;
+    private boolean statusProximity;
 
     //
 
@@ -165,7 +167,13 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         buttonPlayStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                changeAudio();
+                if(mediaPlayer!= null) {
+                    if (mediaPlayer.isPlaying()) {
+                        pause();
+                    } else {
+                       play();
+                    }
+                }
             }
         });
 
@@ -243,24 +251,12 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                     }
                     break;
                 case Sensor.TYPE_PROXIMITY:
-                    if (event.values[0] == 0) { //Cerca
-                        if (mediaPlayer != null) {
-                                //mediaPlayer.reset();
-                                mediaPlayer.stop();
-                                mediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
-                                audioManager.setMode(AudioManager.MODE_IN_CALL);
-                                audioManager.setSpeakerphoneOn(false);
-                                play();
-
-                        } else {
-                            //PLAY ON SPEAKER
-                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                            audioManager.setMode(AudioManager.MODE_IN_CALL);
-                            audioManager.setSpeakerphoneOn(true);
-                            play();
-                            //startPlayProgressUpdater();
+                        if (event.values[0] == 0) { //Cerca
+                            statusProximity = false;
+                        }else {
+                            statusProximity = true;
                         }
-                    }
+
                     break;
 
             }
@@ -383,37 +379,39 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                             }else {
                 Toast.makeText(getApplicationContext(), getString(R.string.yatienes) + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
             }
-            mediaPlayer = MediaPlayer.create(getBaseContext(),mAudIds[res+1]);
-            seekBar.setMax(mediaPlayer.getDuration());
+            loadAudio(mAudIds[res-1]);
             play();
-            //playpause();
         }else{
             Toast.makeText(getApplicationContext(),com.example.practicanpi.R.string.valornovalido, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void changeAudio(){
-        if(status == false){
-            status=true;
-            play();
-        }else{
-            status=false;
-            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
-            mediaPlayer.pause();
+
+    private void play(){
+        if(mediaPlayer!=null){
+            if(!mediaPlayer.isPlaying()){
+                buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
+                mediaPlayer.start();
+                seekBar.setEnabled(true);
+                startPlayProgressUpdater();
+            }
         }
     }
 
-    private void play(){
-        buttonPlayStop.setEnabled(true);
-        if(!mediaPlayer.isPlaying()){
-            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
-            try{
-                mediaPlayer.start();
-                startPlayProgressUpdater();
-            }catch (IllegalStateException e) {
+    private void pause(){
+        buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
+        if (mediaPlayer!=null){
+            if (mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
             }
         }
+
+    }
+    private void loadAudio(int resource){
+        mediaPlayer = MediaPlayer.create(getBaseContext(),resource);
+        seekBar.setMax(mediaPlayer.getDuration());
+        audioManager.setMode(AudioManager.STREAM_MUSIC);
+        //play();
     }
 
     private void seekChange(View v){
@@ -425,20 +423,25 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     public void startPlayProgressUpdater() {
         seekBar.setProgress(mediaPlayer.getCurrentPosition());
-
+        audioManager.setSpeakerphoneOn(statusProximity);
         if (mediaPlayer.isPlaying()) {
-            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
             Runnable notification = new Runnable() {
                 public void run() {
                     startPlayProgressUpdater();
                 }
             };
-            handler.postDelayed(notification,500);
+            handler.postDelayed(notification,100);
         }else{
-            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
+            pause();
+            buttonPlayStop.setEnabled(false);
             seekBar.setProgress(0);
+            seekBar.setEnabled(false);
         }
     }
+
+
+
+
 
 }
 
