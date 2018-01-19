@@ -1,26 +1,33 @@
 package com.example.practicanpi;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -61,7 +68,13 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     private  ImageAdapter adapter;
     //Audio
-    MediaPlayer mp;
+    private ImageButton buttonPlayStop;
+    private MediaPlayer mediaPlayer;
+    private SeekBar seekBar;
+    private Handler handler;
+    private AudioManager audioManager;
+    private boolean status = false;
+
     //
 
 
@@ -82,28 +95,46 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             R.string.cuadro
     };
 
+    private Integer[] mAudIds = {
+            R.raw.a1,
+            R.raw.a2,
+            R.raw.a3,
+            R.raw.a4,
+            R.raw.a5
+    };
+
     DecimalFormat dosdecimales = new DecimalFormat("###.###");
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor);
 
         i("info","Empezamos bien");
-        //prox = (TextView) findViewById(R.id.proximidad);
-        //acel = (TextView) findViewById(R.id.acel);
-        //detecta = (TextView) findViewById(R.id.detecta);
-        //qr = (TextView) findViewById(R.id.qr);
-        //
-        //
-        botonQr = findViewById(R.id.activarQR);
 
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+        botonQr = findViewById(R.id.activarQR);
         gridview = (GridView) findViewById(R.id.gridview);
         encontradosList = new ArrayList<Integer>();
-        //encontradosList.add(1);
-
         adapter = (ImageAdapter) new ImageAdapter(this, encontradosList);
         gridview.setAdapter(adapter);
+
+
+        //Audio
+        buttonPlayStop = findViewById(R.id.playpauseButton);
+        seekBar = findViewById(R.id.seekBar);
+
+        buttonPlayStop.setEnabled(false);
+        seekBar.setEnabled(false);
+
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        handler = new Handler();
+
+
+        this.iniciarSensores();
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -120,9 +151,8 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         });
 
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        this.iniciarSensores();
+
 
         botonQr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,13 +160,27 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                     iniciarRecoQR();
             }
         });
+
+        //AUDIO
+        buttonPlayStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeAudio();
+            }
+        });
+
+        seekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override public boolean onTouch(View v, MotionEvent event) {
+            seekChange(v);
+            return false; }
+        });
+
         //NFC
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(nfcAdapter==null){
             Toast.makeText(this,R.string.noNFC,Toast.LENGTH_LONG).show();
-            //finish();
         }
-        //
+
     }
 
     protected void iniciarRecoQR(){
@@ -145,15 +189,11 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     protected void iniciarSensores(){
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
+        //sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
         //sensorManager.registerListener((SensorEventListener) this, sensorManager.getDefaultSensor(Sensor.T),SensorManager.SENSOR_DELAY_NORMAL);
 
     }
 
-    protected void cambiarView(){
-
-
-    }
 
     protected void iniciarQR(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -164,12 +204,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             Intent intent = new Intent(this, ScannerUtility.class);
             startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
         }
-    }
-
-    protected void reproduce(int resource){
-        Log.e("audio","Reproduciendo audio");
-        mp=MediaPlayer.create(this, resource);
-        mp.start();
     }
 
     @Override
@@ -191,23 +225,13 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                         long diffTime = (curTime - lastUpdate);
                         lastUpdate = curTime;
 
-                        //c'est quoi values ? Où l'initialiser?
-                       // x = values[SensorManager.DATA_X];
-                       // y = values[SensorManager.DATA_Y];
-                        // z = values[SensorManager.DATA_Z];
-
                         if (Round(x, 4) > 10.0000) {
                             Log.d("sensor", " X Right axis: " + x);
-                            //moveTo(currentPage-1);
-                            //mPager.setCurrentItem(currentPage, true);
-                            //Toast.makeText(this, "Right shake detected", Toast.LENGTH_SHORT).show();
+                            //DER
 
                         } else if (Round(x, 4) < -10.0000) {
                             Log.d("sensor", "X Left axis: " + x);
-                            //moveTo(currentPage+1);
-
-                            //mPager.setCurrentItem(currentPage, true);
-                           // Toast.makeText(this, "Left shake detected", Toast.LENGTH_SHORT).show();
+                           //IZQ
                         }
                         float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
                         if (speed > SHAKE_THRESHOLD) {
@@ -217,18 +241,25 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                         }
 
                     }
-
                     break;
                 case Sensor.TYPE_PROXIMITY:
                     if (event.values[0] == 0) { //Cerca
+                        if (mediaPlayer != null) {
+                                //mediaPlayer.reset();
+                                mediaPlayer.stop();
+                                mediaPlayer.setAudioStreamType(AudioManager.STREAM_VOICE_CALL);
+                                audioManager.setMode(AudioManager.MODE_IN_CALL);
+                                audioManager.setSpeakerphoneOn(false);
+                                play();
 
-                        if(mp!=null){
-                            mp.release();
-                            Toast.makeText(getApplicationContext(), "Parando audio!", Toast.LENGTH_SHORT).show();
-
-                            mp = null;
+                        } else {
+                            //PLAY ON SPEAKER
+                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                            audioManager.setMode(AudioManager.MODE_IN_CALL);
+                            audioManager.setSpeakerphoneOn(true);
+                            play();
+                            //startPlayProgressUpdater();
                         }
-
                     }
                     break;
 
@@ -333,9 +364,9 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     @Override protected void onDestroy() {
         super.onDestroy();
-        if(mp!=null) {
-            mp.release();
-            mp = null;
+        if(mediaPlayer!=null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
         }
 
 
@@ -349,15 +380,67 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                 //RES = CODIGO QR LEIDO
                 //moveTo(res);
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.Hasencontrado) + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
-
-            }else {
+                            }else {
                 Toast.makeText(getApplicationContext(), getString(R.string.yatienes) + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
             }
-
+            mediaPlayer = MediaPlayer.create(getBaseContext(),mAudIds[res+1]);
+            seekBar.setMax(mediaPlayer.getDuration());
+            play();
+            //playpause();
         }else{
             Toast.makeText(getApplicationContext(),com.example.practicanpi.R.string.valornovalido, Toast.LENGTH_SHORT).show();
         }
     }
 
+    private void changeAudio(){
+        if(status == false){
+            status=true;
+            play();
+        }else{
+            status=false;
+            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
+            mediaPlayer.pause();
+        }
+    }
+
+    private void play(){
+        buttonPlayStop.setEnabled(true);
+        if(!mediaPlayer.isPlaying()){
+            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
+            try{
+                mediaPlayer.start();
+                startPlayProgressUpdater();
+            }catch (IllegalStateException e) {
+                mediaPlayer.pause();
+            }
+        }
+    }
+
+    private void seekChange(View v){
+        if(mediaPlayer.isPlaying()){
+            SeekBar sb = (SeekBar)v;
+            mediaPlayer.seekTo(sb.getProgress());
+        }
+    }
+
+    public void startPlayProgressUpdater() {
+        seekBar.setProgress(mediaPlayer.getCurrentPosition());
+
+        if (mediaPlayer.isPlaying()) {
+            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
+            Runnable notification = new Runnable() {
+                public void run() {
+                    startPlayProgressUpdater();
+                }
+            };
+            handler.postDelayed(notification,500);
+        }else{
+            buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
+            seekBar.setProgress(0);
+        }
+    }
+
 }
+
+
 
