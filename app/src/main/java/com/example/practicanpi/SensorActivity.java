@@ -56,7 +56,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     //My changes
 
     //NFC
-    //ajout solucion internet
+    //just a comment
     private long lastUpdate = -1;
     //private float x,y,z;
 
