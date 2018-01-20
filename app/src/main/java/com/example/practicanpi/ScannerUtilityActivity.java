@@ -12,7 +12,7 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
  * Created by soler on 21/12/2017.
  */
 
-public class ScannerUtility extends Activity implements ZBarScannerView.ResultHandler {
+public class ScannerUtilityActivity extends Activity implements ZBarScannerView.ResultHandler {
     private ZBarScannerView mScannerView;
 
     @Override

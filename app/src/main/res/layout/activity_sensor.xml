@@ -10,13 +10,34 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/activarQR"
-            style="@style/Widget.AppCompat.Button.Colored"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
+
             android:layout_alignParentBottom="true"
-            android:text="@string/leer_qr" />
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentLeft="false"
+            android:layout_alignParentTop="false"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            >
+
+            <Button
+                android:id="@+id/activarQR"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:layout_weight="1"
+                android:text="@string/leer_qr" />
+
+            <Button
+                android:id="@+id/buttonGyroscope"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/buttonGyro" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

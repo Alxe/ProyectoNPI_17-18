@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -26,6 +27,7 @@
         <activity android:name=".IndexActivity" />
         <activity android:name=".DialogActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+<<<<<<< HEAD
         <activity android:name=".SensorActivity">
             <intent-filter>
                 <action android:name="android.nfc.action.TAG_DISCOVERED"/>
@@ -33,7 +35,14 @@
             </intent-filter>
         </activity>
         <activity android:name=".ScannerUtility" />
+=======
+        <activity android:name=".SensorActivity" />
+        <activity android:name=".ScannerUtilityActivity" />
+>>>>>>> 63f550ebc3a783d7bd48fbe1b95add7cb6cb8319
         <activity android:name=".SendObjectActivity" />
+        <activity android:name=".acelerometroActivity"
+            android:screenOrientation="portrait"
+            />
 
     </application>
 

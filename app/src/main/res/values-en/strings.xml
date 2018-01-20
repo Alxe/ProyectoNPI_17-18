@@ -22,6 +22,7 @@
     <string name="o2">spear</string>
     <string name="o3">fishing rod</string>
     <string name="o4">shield</string>
+    <string name="empty">empty</string>
     <string name="Hasencontrado">You have found a</string>
     <string name="yatienes">You already have this </string>
     <string name="valornovalido">What had you found? We dont know what it is</string>
@@ -30,4 +31,5 @@
     <string name="pulsasobreobjeto">Pulsa sobre un objeto para entregarlo</string>
     <string name="objetoentregado">Objeto entregado!</string>
     <string name="noNFC">NFC NOT supported on this device!</string>
+    <string name="buttonGyro">giroscopio</string>
 </resources>

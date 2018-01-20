@@ -15,23 +15,18 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,18 +39,25 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     private static final String TAG = "SensorActivity";
 
+    //Codigos para request de permisos y results de activitys
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private static final int BARCODE_READER_REQUEST_CODE = 2;
     private static final int SEND_OBJECT_RESULT = 3;
-
+    private static final int GYROSCOPE_REQUEST = 4;
+    //
+    //Sensor manager para control de proximidad y giroscopios
     private SensorManager sensorManager;
-    private Button botonQr;
-    private GridView gridview;
+    //
+    //IU
+    private Button botonQr; //Boton para leer QR
+    private GridView gridview; //Grid de objetos
+    private ImageButton buttonPlayStop; //Play/pause
+    private SeekBar seekBar; //Barra de audio
+    private Button botonGyro;
+    //
+    //Objetos encontrados
     private List<Integer> encontradosList;
-    //QR
-    private String token = "";
-
-    //My changes
+    //
 
     //NFC
     //just a comment
@@ -70,16 +72,14 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     private  ImageAdapter adapter;
     //Audio
-    private ImageButton buttonPlayStop;
     private MediaPlayer mediaPlayer;
-    private SeekBar seekBar;
     private Handler handler;
     private AudioManager audioManager;
-    private boolean statusProximity;
+    private boolean statusProximity; //status del sensor de proximidad
 
     //
 
-
+    //Fotos de los objetos
     private Integer[] mThumbIds = {
             R.drawable.blank,
             R.drawable.o1,
@@ -88,6 +88,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             R.drawable.o4,
             R.drawable.cuadro
     };
+    //Nombre de los objetos
     private Integer[] mNameIds = {
             R.string.empty,
             R.string.o1,
@@ -96,7 +97,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             R.string.o4,
             R.string.cuadro
     };
-
+    //Audios de los objetos = -1
     private Integer[] mAudIds = {
             R.raw.a1,
             R.raw.a2,
@@ -117,6 +118,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         botonQr = findViewById(R.id.activarQR);
+        botonGyro = findViewById(R.id.buttonGyroscope);
         gridview = (GridView) findViewById(R.id.gridview);
         encontradosList = new ArrayList<Integer>();
         adapter = (ImageAdapter) new ImageAdapter(this, encontradosList);
@@ -159,6 +161,16 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             }
         });
 
+        botonGyro.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        iniciarGyro();
+                    }
+                }
+
+        );
+
         //AUDIO
         buttonPlayStop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,6 +209,11 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         //sensorManager.registerListener((SensorEventListener) this, sensorManager.getDefaultSensor(Sensor.T),SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    private void iniciarGyro(){
+        Intent intent = new Intent(this,acelerometroActivity.class);
+        startActivity(intent);
+    }
+
 
     protected void iniciarQR(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
@@ -204,60 +221,32 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
         } else {
-            Intent intent = new Intent(this, ScannerUtility.class);
+            Intent intent = new Intent(this, ScannerUtilityActivity.class);
             startActivityForResult(intent, BARCODE_READER_REQUEST_CODE);
         }
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        String txt = "\n\nSensor: ";
         synchronized (this) {
             d("sensor", event.sensor.getName());
-
-            switch (event.sensor.getType()){
-                case Sensor.TYPE_ACCELEROMETER:
-
-                    float x = event.values[0];
-                    float y = event.values[1];
-                    float z = event.values[2];
-
-
-                    long curTime = System.currentTimeMillis();
-                    if ((curTime - lastUpdate) > 500) {
-                        long diffTime = (curTime - lastUpdate);
-                        lastUpdate = curTime;
-
-                        if (Round(x, 4) > 10.0000) {
-                            Log.d("sensor", " X Right axis: " + x);
-                            //DER
-
-                        } else if (Round(x, 4) < -10.0000) {
-                            Log.d("sensor", "X Left axis: " + x);
-                           //IZQ
-                        }
-                        float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-                        if (speed > SHAKE_THRESHOLD) {
-                            last_x = x;
-                            last_y = y;
-                            last_z = z;
-                        }
-
-                    }
-                    break;
-                case Sensor.TYPE_PROXIMITY:
+                if(event.sensor.getType() == Sensor.TYPE_PROXIMITY){
                         if (event.values[0] == 0) { //Cerca
                             statusProximity = false;
                         }else {
                             statusProximity = true;
                         }
-
-                    break;
+                }
 
             }
 
         }
+<<<<<<< HEAD
     }
+=======
+
+
+>>>>>>> 63f550ebc3a783d7bd48fbe1b95add7cb6cb8319
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -354,10 +343,24 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     @Override protected void onDestroy() {
         super.onDestroy();
         if(mediaPlayer!=null) {
+            mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
         }
     }
+<<<<<<< HEAD
+=======
+
+    @Override protected void onPause() {
+        super.onPause();
+        if(mediaPlayer!=null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+>>>>>>> 63f550ebc3a783d7bd48fbe1b95add7cb6cb8319
     private void añadirObjeto(int res){
         if(res <= mNameIds.length && res > 0 ){
             if (!encontradosList.contains(res)) {
@@ -423,7 +426,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }else{
             pause();
             buttonPlayStop.setEnabled(false);
-            seekBar.setProgress(0);
             seekBar.setEnabled(false);
         }
     }

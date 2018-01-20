@@ -1,3 +1,4 @@
+<<<<<<< HEAD
     package com.example.practicanpi;
 
     import android.app.PendingIntent;
@@ -75,6 +76,79 @@
                 //finish();
             }else if(!nfcAdapter.isEnabled()){Toast.makeText(this, "NFC NOT Enabled!", Toast.LENGTH_LONG).show();
                 //finish();
+=======
+package com.example.practicanpi;
+
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
+import android.nfc.tech.NdefFormatable;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+
+
+import android.nfc.NfcAdapter;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Locale;
+
+/**
+ * Created by soler on 16/01/2018.
+ */
+
+public class SendObjectActivity extends NpiActivity{
+
+    private NfcAdapter nfcAdapter;
+    private PendingIntent mNfcPendingIntent;
+    private int imageRes;
+    private Integer[] mQRIds = {
+            R.drawable.blank,
+            R.drawable.qr1,
+            R.drawable.qr2,
+            R.drawable.qr3,
+            R.drawable.qr4,
+            R.drawable.qr5
+    };
+    private Integer[] mNameIds = {
+            R.string.empty,
+            R.string.o1,
+            R.string.o2,
+            R.string.o3,
+            R.string.o4,
+            R.string.cuadro
+    };
+
+    Button entregado;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_entregar_objeto);
+
+        imageRes = getIntent().getIntExtra("objeto",-1);
+
+        entregado = findViewById(R.id.objetoEntregado);
+
+        ImageView qr = findViewById(R.id.imageView_QR);
+
+        qr.setImageResource(mQRIds[imageRes]);
+
+
+
+        entregado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra("objeto", imageRes);
+                setResult(RESULT_OK, intent);
+                finish();
+>>>>>>> 63f550ebc3a783d7bd48fbe1b95add7cb6cb8319
             }
 
             /*else {
