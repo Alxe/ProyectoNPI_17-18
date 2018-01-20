@@ -48,6 +48,7 @@
     <string name="Objeto_Entregado">Objeto Entregado</string>
     <string name="pulsasobreobjeto">Pulsa sobre un objeto para entregarlo</string>
     <string name="objetoentregado">Objeto entregado!</string>
-    <string name="noNFC">NFC NOT supported on this device!</string>
+    <string name="noNFC">Tu dispositivo no tiene soporte para nfc!</string>
+    <string name="buttonGyro">giroscopio</string>
     <!-- End Sensores -->
 </resources>

@@ -50,7 +50,7 @@ public class SendObjectActivity extends NpiActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.entregar_objeto);
+        setContentView(R.layout.activity_entregar_objeto);
 
         imageRes = getIntent().getIntExtra("objeto",-1);
 
