@@ -26,7 +26,12 @@
         <activity android:name=".IndexActivity" />
         <activity android:name=".DialogActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SensorActivity" />
+        <activity android:name=".SensorActivity">
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".ScannerUtility" />
         <activity android:name=".SendObjectActivity" />
 

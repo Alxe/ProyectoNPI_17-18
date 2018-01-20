@@ -116,7 +116,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         i("info","Empezamos bien");
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
         botonQr = findViewById(R.id.activarQR);
         gridview = (GridView) findViewById(R.id.gridview);
         encontradosList = new ArrayList<Integer>();
@@ -151,9 +150,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                 }
             }
         });
-
-
-
 
 
         botonQr.setOnClickListener(new View.OnClickListener() {
@@ -199,7 +195,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL);
         //sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
         //sensorManager.registerListener((SensorEventListener) this, sensorManager.getDefaultSensor(Sensor.T),SensorManager.SENSOR_DELAY_NORMAL);
-
     }
 
 
@@ -263,7 +258,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
         }
     }
-
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -284,7 +278,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                 {
                     res = -1;
                 }
-
                 añadirObjeto(res);
 
             }
@@ -298,7 +291,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                     encontradosList.remove(encontradosList.indexOf(objeto));
                     adapter.update(encontradosList);
                     Toast.makeText(getApplicationContext(), R.string.objetoentregado, Toast.LENGTH_SHORT).show();
-
                 }
             }
         }
@@ -307,39 +299,27 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     @Override
     protected void onResume() {
         super.onResume();
-
+        i("info"," entering on resume");
         if (nfcAdapter!=null) {
             Intent intent = getIntent();
             String action = intent.getAction();
-
             if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-                Toast.makeText(this,
-                        "onResume() - ACTION_TAG_DISCOVERED",
-                        Toast.LENGTH_SHORT).show();
-
+                i("info"," NFC tag discovered");
+                //Toast.makeText(this,"onResume() - ACTION_TAG_DISCOVERED",Toast.LENGTH_SHORT).show();
                 Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                 if (tag == null) {
-                    //textViewInfo.setText("tag == null");
+                    i("info_null","NFC Tag null");
                 } else {
-                    String tagInfo = tag.toString() + "\n";
-
-                    tagInfo += "\nTag Id: \n";
+                    String tagInfo = "";
                     byte[] tagId = tag.getId();
-                    tagInfo += "length = " + tagId.length + "\n";
                     for (int i = 0; i < tagId.length; i++) {
-                        tagInfo += Integer.toHexString(tagId[i] & 0xFF) + " ";
+                        tagInfo += Integer.toHexString(tagId[i] & 0xFF);
                     }
-                    tagInfo += "\n";
 
-                    String[] techList = tag.getTechList();
-                    tagInfo += "\nTech List\n";
-                    tagInfo += "length = " + techList.length + "\n";
-                    for (int i = 0; i < techList.length; i++) {
-                        tagInfo += techList[i] + "\n ";
-                    }
-                    Log.e(TAG, "tagInfo" + tagInfo);
-                    //Aqui añadirObjeto(codigo NFC)
-                    //textViewInfo.setText(tagInfo);
+                    tagInfo.replaceAll(" ",""); //no blanks
+                    Log.e(TAG, "NFC scanned " + tagInfo );
+                    //associate int to NFC Tag then add object to the list
+                    handleNFCId(tagInfo);
                 }
             } else {
                 Toast.makeText(this,
@@ -347,7 +327,22 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                         Toast.LENGTH_SHORT).show();
             }
         }
-
+    }
+    private void handleNFCId(String myTag){
+        //This function associates an 'int' to an 'NFC tag'
+        int res = -1;
+        if(myTag.equals( "4d888629")){
+            Log.e("Student card:",myTag);
+            res =1; //Lanza
+            //Toast.makeText(this, "Estas en la primera sala, bienvenido", Toast.LENGTH_SHORT).show();
+        }
+        if(myTag.equals( "7d34874e")){
+            Log.e("Bus card de Sophïa:",myTag);
+            res = 2; //jarron
+            //Toast.makeText(this, "Estas en la segunda sala, bienvenido", Toast.LENGTH_SHORT).show();
+        }
+        //add objet to list
+        añadirObjeto(res);
     }
     public static float Round(float Rval, int Rpl) {
         float p = (float)Math.pow(10,Rpl);
@@ -356,18 +351,13 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         return (float)tmp/p;
     }
 
-
-
     @Override protected void onDestroy() {
         super.onDestroy();
         if(mediaPlayer!=null) {
             mediaPlayer.release();
             mediaPlayer = null;
         }
-
-
     }
-
     private void añadirObjeto(int res){
         if(res <= mNameIds.length && res > 0 ){
             if (!encontradosList.contains(res)) {
@@ -385,7 +375,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             Toast.makeText(getApplicationContext(),com.example.practicanpi.R.string.valornovalido, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void play(){
         if(mediaPlayer!=null){
