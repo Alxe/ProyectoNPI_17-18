@@ -51,7 +51,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     //IU
     private Button botonQr; //Boton para leer QR
     private GridView gridview; //Grid de objetos
-    private ImageButton buttonPlayStop; //Play/pause
+    //private ImageButton buttonPlayStop; //Play/pause
     private SeekBar seekBar; //Barra de audio
     private Button botonGyro;
     //
@@ -126,10 +126,10 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
 
         //Audio
-        buttonPlayStop = findViewById(R.id.playpauseButton);
+        //buttonPlayStop = findViewById(R.id.playpauseButton);
         seekBar = findViewById(R.id.seekBar);
 
-        buttonPlayStop.setEnabled(false);
+        //buttonPlayStop.setEnabled(false);
         seekBar.setEnabled(false);
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -144,6 +144,9 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                                     int position, long id) {
                 Intent intent = new Intent(getBaseContext(), SendObjectActivity.class);
                 if(encontradosList.size()>position){
+                    if(mediaPlayer!=null){
+                        mediaPlayer.stop();
+                    }
                     intent.putExtra("objeto",encontradosList.get(position));
                     startActivityForResult(intent,SEND_OBJECT_RESULT);
                 }else{
@@ -172,6 +175,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         );
 
         //AUDIO
+        /*
         buttonPlayStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -183,7 +187,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                     }
                 }
             }
-        });
+        });*/
 
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override public boolean onTouch(View v, MotionEvent event) {
@@ -377,7 +381,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     private void play(){
         if(mediaPlayer!=null){
             if(!mediaPlayer.isPlaying()){
-                buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
+                //buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
                 mediaPlayer.start();
                 seekBar.setEnabled(true);
                 startPlayProgressUpdater();
@@ -386,7 +390,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     }
 
     private void pause(){
-        buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
+        //buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
         if (mediaPlayer!=null){
             if (mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
@@ -409,19 +413,21 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     }
 
     public void startPlayProgressUpdater() {
-        seekBar.setProgress(mediaPlayer.getCurrentPosition());
-        audioManager.setSpeakerphoneOn(statusProximity);
-        if (mediaPlayer.isPlaying()) {
-            Runnable notification = new Runnable() {
-                public void run() {
-                    startPlayProgressUpdater();
-                }
-            };
-            handler.postDelayed(notification,100);
-        }else{
-            pause();
-            buttonPlayStop.setEnabled(false);
-            seekBar.setEnabled(false);
+        if (mediaPlayer != null) {
+            seekBar.setProgress(mediaPlayer.getCurrentPosition());
+            audioManager.setSpeakerphoneOn(statusProximity);
+            if (mediaPlayer.isPlaying()) {
+                Runnable notification = new Runnable() {
+                    public void run() {
+                        startPlayProgressUpdater();
+                    }
+                };
+                handler.postDelayed(notification, 100);
+            } else {
+                pause();
+                // buttonPlayStop.setEnabled(false);
+                seekBar.setEnabled(false);
+            }
         }
     }
 
