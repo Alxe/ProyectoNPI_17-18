@@ -49,8 +49,8 @@
                 R.string.cuadro
         };
 
-        Button entregado;
-        TextView textViewInfo;
+        private Button entregado;
+        private TextView textViewInfo;
         @Override
         protected void onCreate(Bundle savedInstanceState) 
         {
@@ -61,13 +61,14 @@
             entregado = findViewById(R.id.objetoEntregado);
             ImageView qr = findViewById(R.id.imageView_QR);
             qr.setImageResource(mQRIds[imageRes]);
+
             entregado.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent();
                     intent.putExtra("objeto", imageRes);
                     setResult(RESULT_OK, intent);
-                    //finish();
+                    finish();
                 }
             });
 
