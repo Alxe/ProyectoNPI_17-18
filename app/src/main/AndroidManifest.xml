@@ -33,7 +33,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ScannerUtility" />
+        <activity android:name=".ScannerUtilityActivity" />
         <activity android:name=".SendObjectActivity" />
         <activity android:name=".acelerometroActivity"
             android:screenOrientation="portrait"
