@@ -227,26 +227,24 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     }
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        synchronized (this) {
+    public void onSensorChanged(SensorEvent event) 
+    {
+        synchronized (this) 
+        {
             d("sensor", event.sensor.getName());
-                if(event.sensor.getType() == Sensor.TYPE_PROXIMITY){
-                        if (event.values[0] == 0) { //Cerca
+                if(event.sensor.getType() == Sensor.TYPE_PROXIMITY)
+                {
+                        if (event.values[0] == 0) 
+                        { //Cerca
                             statusProximity = false;
-                        }else {
+                        }
+                    else {
                             statusProximity = true;
                         }
                 }
-
-            }
-
         }
-<<<<<<< HEAD
     }
-=======
 
-
->>>>>>> 63f550ebc3a783d7bd48fbe1b95add7cb6cb8319
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
@@ -348,8 +346,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             mediaPlayer = null;
         }
     }
-<<<<<<< HEAD
-=======
 
     @Override protected void onPause() {
         super.onPause();
@@ -360,7 +356,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }
     }
 
->>>>>>> 63f550ebc3a783d7bd48fbe1b95add7cb6cb8319
     private void añadirObjeto(int res){
         if(res <= mNameIds.length && res > 0 ){
             if (!encontradosList.contains(res)) {
@@ -429,10 +424,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             seekBar.setEnabled(false);
         }
     }
-
-
-
-
 
 }
 
