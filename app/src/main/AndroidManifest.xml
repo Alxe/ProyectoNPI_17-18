@@ -35,7 +35,7 @@
         </activity>
         <activity android:name=".ScannerUtilityActivity" />
         <activity android:name=".SendObjectActivity" />
-        <activity android:name=".acelerometroActivity"
+        <activity android:name=".AccelerometerActivity"
             android:screenOrientation="portrait"
             />
 
