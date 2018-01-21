@@ -25,7 +25,7 @@
     /**
      * Created by soler on 16/01/2018.
      */
-
+    //just a command
     public class SendObjectActivity extends NpiActivity
     {
 
