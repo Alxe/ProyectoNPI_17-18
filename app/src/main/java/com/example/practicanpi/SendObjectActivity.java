@@ -55,7 +55,7 @@
         protected void onCreate(Bundle savedInstanceState) 
         {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.entregar_objeto);
+            setContentView(R.layout.activity_entregar_objeto);
             //textViewInfo = findViewById(R.id.info); //sophia
             imageRes = getIntent().getIntExtra("objeto",-1);
             entregado = findViewById(R.id.objetoEntregado);
