@@ -16,7 +16,7 @@ import android.widget.ScrollView;
  * Created by soler on 19/01/2018.
  */
 
-public class acelerometroActivity extends NpiActivity implements SensorEventListener{
+public class AccelerometerActivity extends NpiActivity implements SensorEventListener{
 
     private SensorManager sensorManager;
     private ImageView image;

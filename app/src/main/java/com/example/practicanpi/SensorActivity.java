@@ -210,7 +210,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     }
 
     private void iniciarGyro(){
-        Intent intent = new Intent(this,acelerometroActivity.class);
+        Intent intent = new Intent(this,AccelerometerActivity.class);
         startActivity(intent);
     }
 
