@@ -59,7 +59,8 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
     @Override
     public void onResume() {
         super.onResume();
-        mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
+        if(mNfcAdapter!=null)
+            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
         mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
         mScannerView.startCamera();          // Start camera on resume
     }
