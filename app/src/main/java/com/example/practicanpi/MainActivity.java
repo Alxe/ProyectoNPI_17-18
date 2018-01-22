@@ -11,6 +11,11 @@ import java.util.Locale;
 
 import ai.api.android.AIConfiguration;
 
+/**
+ * Actividad principal
+ *
+ * Muestra la selección de idioma, y redirecciona a {@link IndexActivity}.
+ */
 public class MainActivity extends NpiActivity {
 
     @Override

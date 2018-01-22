@@ -21,7 +21,7 @@ import ai.api.model.AIResponse;
 import ai.api.ui.AIDialog;
 
 /**
- * A simple {@link Fragment} subclass.
+ * El {@link Fragment} que se encargaría de mostrar la respuesta de diálogo
  */
 public class DialogResponseFragment extends Fragment implements AIDialog.AIDialogListener, TextToSpeech.OnInitListener {
 
@@ -81,7 +81,6 @@ public class DialogResponseFragment extends Fragment implements AIDialog.AIDialo
             Log.e(DialogResponseFragment.class.getSimpleName(),
                     String.format("Error on TTS init"));
         } else {
-            // TODO: Localisation
             tts.setLanguage(Locale.getDefault());
         }
     }

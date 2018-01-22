@@ -11,6 +11,11 @@ import android.util.Log;
 
 import java.util.Locale;
 
+/**
+ * Clase base para las actividades de la aplicación
+ *
+ * Su principal uso es cambiar el idioma base, basandonse en las preferencias de usuario
+ */
 abstract class NpiActivity extends AppCompatActivity {
 
     @Override

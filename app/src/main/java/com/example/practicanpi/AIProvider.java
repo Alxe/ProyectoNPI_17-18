@@ -10,6 +10,9 @@ import java.util.Map;
 
 import ai.api.android.AIConfiguration;
 
+/**
+ * Clase <i>Singleton</i> que gestiona la configuración de DialogFlow
+ */
 class AIProvider {
 
     static private final AIProvider instance = new AIProvider();
@@ -21,6 +24,11 @@ class AIProvider {
 
     private final String AI_TOKEN = "1973329acf964ea48e5d08e04d2c08a0";
 
+    /**
+     * Dado un Contexto, proporciona una configuración basada en el idioma de preferencias
+     * @param context Contexto de una aplicación o actividad
+     * @return Objeto de onfiguración de Dialogflow
+     */
     AIConfiguration getAiConfig(Context context) {
         final SharedPreferences prefs = context.getSharedPreferences("NpiPrefs", Context.MODE_PRIVATE);
 

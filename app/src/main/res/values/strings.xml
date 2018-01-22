@@ -53,5 +53,5 @@
     <string name="earpiece">Reproduciendo por auricular</string>
     <string name="acelerometroSubir">Subiendo</string>
     <string name="acelerometroBajar">Bajando</string>
-    <!-- End Sensores -->
+    <string name="fragment_dialog_input_itemclick">TODO: Enviado a DialogFlow el mensaje \"%1$s\"</string>
 </resources>

@@ -35,4 +35,5 @@
     <string name="earpiece">Playing by earpiece</string>
     <string name="acelerometroSubir">Subiendo</string>
     <string name="acelerometroBajar">Bajando</string>
+    <string name="fragment_dialog_input_itemclick">TODO: Sending message \"%1$s\" to DialogFlow</string>
 </resources>

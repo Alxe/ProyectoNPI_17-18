@@ -17,13 +17,23 @@ import android.widget.Toast;
 import ai.api.android.AIConfiguration;
 import ai.api.ui.AIDialog;
 
+/**
+ * Actividad principal del módulo de diálogo.
+ */
 public class DialogActivity extends NpiActivity {
     /**
-     * Dialogo reuitilizable para contactar con Dialogflow
+     * <i>Dialog</i> reuitilizable para contactar con Dialogflow
      */
     private AIDialog aiDialog;
 
+    /**
+     * Fragmento de entrada de diálogo (selección-texto)
+     */
     private DialogInputFragment dialogInputFragment;
+
+    /**
+     * Fragmento de respuesta de diálogo (mostrar-texto)
+     */
     private DialogResponseFragment dialogResponseFragment;
 
     /**

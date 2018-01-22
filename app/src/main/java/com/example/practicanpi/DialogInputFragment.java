@@ -60,7 +60,7 @@ public class DialogInputFragment extends Fragment {
 
                 Toast.makeText(
                         getActivity().getBaseContext(),
-                        String.format("TODO: Enviado a DialogFlow el mensaje \"%s\"", clickedItem),
+                        String.format(getString(R.string.fragment_dialog_input_itemclick), clickedItem),
                         Toast.LENGTH_LONG)
                      .show();
 
