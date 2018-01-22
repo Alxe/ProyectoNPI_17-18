@@ -23,13 +23,14 @@
     <string name="o3">fishing rod</string>
     <string name="o4">shield</string>
     <string name="empty">empty</string>
-    <string name="Hasencontrado">You have found a</string>
+    <string name="Hasencontrado">You have found a </string>
     <string name="yatienes">You already have this </string>
     <string name="valornovalido">What had you found? We dont know what it is</string>
     <string name="qrfallido">Something went wrong reading the QR code!</string>
     <string name="Objeto_Entregado">Object delivered!</string>
-    <string name="pulsasobreobjeto">Pulsa sobre un objeto para entregarlo</string>
-    <string name="objetoentregado">Objeto entregado!</string>
+    <string name="pulsasobreobjeto">Press over an object to send it</string>
+    <string name="objetoentregado">Object delivered!</string>
     <string name="noNFC">NFC NOT supported on this device!</string>
-    <string name="buttonGyro">giroscopio</string>
+    <string name="buttonGyro">Photo</string>
+    <string name="earpiece">Playing by earpiece</string>
 </resources>

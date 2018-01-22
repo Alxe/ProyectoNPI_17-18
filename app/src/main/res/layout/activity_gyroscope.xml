@@ -21,8 +21,8 @@
 
             <ImageView
                 android:id="@+id/bigImage"
-                android:layout_width="2416dp"
-                android:layout_height="4752dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="false"
                 android:background="@drawable/big"
                 android:cropToPadding="false" />

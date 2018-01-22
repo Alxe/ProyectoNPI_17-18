@@ -262,6 +262,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                             statusProximity = false;
                         }
                     else {
+                            Toast.makeText(getApplicationContext(), R.string.earpiece, Toast.LENGTH_SHORT).show();
                             statusProximity = true;
                         }
                 }
