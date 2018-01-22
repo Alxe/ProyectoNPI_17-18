@@ -6,28 +6,35 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ViewTreeObserver;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 /**
  * Created by soler on 19/01/2018.
  */
 
+/*
+AccelerometerActivity: Esta activity se encarga del manejo del acelerometro.
+
+    - El acelerometro se usa para hacer scroll de un scrollView segun la inclinación del dispositivo.
+    - Si inclinamos de forma que la parte inferior del dispositivo queda por debajo de la superior superando un limite el scroll bajara.
+    - Si inclinamos al contrario el scroll subira, si el dispositivo se encuentra paralelo al suelo dentro de unos limites el scroll se mantendra en la posicion.
+
+ */
+
 public class AccelerometerActivity extends NpiActivity implements SensorEventListener{
 
-    private SensorManager sensorManager;
-    private ImageView image;
-    private ScrollView scroll;
-    private int[] imageMax = {0,0};
-    private int[] actualPosition = {0,0};
-    private int[] center =  {0,0};
-    private float[] initialPosition = {0,0};
-    private long lastUpdate;
+    private SensorManager sensorManager; //SensorManager para el control de acelerometro
+    private ScrollView scroll; //Scroll
+    private long lastUpdate; //Para llevar control del tiempo en la actualización del scroll
 
-
+    /*
+    onCreate
+        - Asiganamos contenView : activity_gyroscope
+        - Registramos el sensorManager para el acelerometro
+        - Buscamos el scroll con id: scrollVertical
+        - Hacemos lastUpdate = 0
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -35,30 +42,28 @@ public class AccelerometerActivity extends NpiActivity implements SensorEventLis
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
 
-        image = findViewById(R.id.bigImage);
         scroll = findViewById(R.id.scrollVertical);
 
-
-        int width = imageMax[0] = image.getBackground().getIntrinsicWidth();
-        int height = imageMax[1] = image.getBackground().getIntrinsicHeight();
-
-        Log.e("MAX",Integer.toString(width) + " " + Integer.toString(height));
-
-        center[0] =width/2;
-        center[1] =height/2;
-
-        scroll.scrollTo(center[0],center[1]);
 
         lastUpdate = 0;
 
     }
 
+    /*
+    onResume
+        - Registramos sensorManager con el acelerometro
+     */
     @Override
     protected void onResume() {
         super.onResume();
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
 
     }
+    /*
+    onPause
+    onDestroy
+        - Dejamos de leer el acelerometro
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -72,17 +77,24 @@ public class AccelerometerActivity extends NpiActivity implements SensorEventLis
         sensorManager.unregisterListener(this);
     }
 
+    /*
+    onSensorChanged : Se llama cuando cambian los valores del sensor , en este caso acelerometro.
+        - Sincronizamos
+        - Comprobar qe el evento es del tipo acelerometro
+        - Comprobamos que ha pasado tiempo suficiente desde el ultimo cambio
+        - Comprobamos la inclinacion y determinamos el movimiento segun esta
+        - Actualizamos tiempo de ultimo cambio
+     */
     @Override
     public synchronized void onSensorChanged(SensorEvent sensorEvent) {
 
         synchronized (this) {
             if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) { //ACelerometro para la inclinacion
-                if (imageMax[0] == 0) return;
 
                 long curTime = System.currentTimeMillis();
                 if ((curTime - lastUpdate) > 100) {
                     //float xmove = sensorEvent.values[0]; //
-                    float ymove = sensorEvent.values[1];
+                    float ymove = sensorEvent.values[1]; // Aqui encontramos los valores que nos son utiles
                     //float zmove = sensorEvent.values[2]; //
 
 
@@ -90,12 +102,17 @@ public class AccelerometerActivity extends NpiActivity implements SensorEventLis
 
                     float gforce = ymove / SensorManager.GRAVITY_EARTH;
 
-                    if (gforce > 0.3) {
+                    if (gforce > 0.3) { //Inclinacion hacia arriba
                         scroll.smoothScrollBy(0, 100);
                         Log.e("Action","Subir");
-                    } else if (gforce < -0.3) {
+                        //Toast.makeText(this, R.string.acelerometroSubir, Toast.LENGTH_SHORT).show();
+
+
+                    } else if (gforce < -0.3) { //Inclinacion hacia abajo
                         scroll.smoothScrollBy(0, -100);
                         Log.e("Action","Bajar");
+                        //Toast.makeText(this, R.string.acelerometroBajar, Toast.LENGTH_SHORT).show();
+
                     }
                     Log.e("GFORCE", Float.toString(gforce));
                     lastUpdate = curTime;
@@ -106,6 +123,9 @@ public class AccelerometerActivity extends NpiActivity implements SensorEventLis
 
     }
 
+    /*
+        onAccuracyChanged: Sin uso.
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 

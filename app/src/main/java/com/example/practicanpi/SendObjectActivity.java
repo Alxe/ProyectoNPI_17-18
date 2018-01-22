@@ -1,37 +1,45 @@
 
     package com.example.practicanpi;
-    import android.app.PendingIntent;
+
     import android.content.Intent;
-    import android.content.IntentFilter;
     import android.nfc.NdefMessage;
     import android.nfc.NdefRecord;
+    import android.nfc.NfcAdapter;
     import android.nfc.Tag;
     import android.nfc.tech.Ndef;
     import android.nfc.tech.NdefFormatable;
     import android.os.Bundle;
-    import android.util.Log;
     import android.view.View;
     import android.widget.Button;
     import android.widget.ImageView;
-    import android.widget.TextView;
-
-    import android.nfc.NfcAdapter;
     import android.widget.Toast;
 
     import java.io.ByteArrayOutputStream;
     import java.util.Locale;
-    import static android.util.Log.d;
-    import static android.util.Log.i;
     /**
      * Created by soler on 16/01/2018.
      */
-    //just a command
+    /*
+    SendObjectActivity : Activity para "enviar" los objetos. Su proposito es el de "emitir" el /
+    codigo del objeto para que sea leido por elemento externo
+
+        - En el caso del QR se muestra por pantalla
+        - En el caso del NFC se emite el codigo del objeto
+
+        - Datos:
+            - nfcAdapter: Adaptador NFC
+            - imageRes: codigo objeto a mostrar
+            - entregado: Boton para terminar la activity
+            - mQRIds: Ids de las imagenes QR
+     */
+
     public class SendObjectActivity extends NpiActivity
     {
 
         private NfcAdapter nfcAdapter;
-        private PendingIntent mNfcPendingIntent;
         private int imageRes;
+        private Button entregado;
+
         private Integer[] mQRIds = {
                 R.drawable.blank,
                 R.drawable.qr1,
@@ -40,26 +48,29 @@
                 R.drawable.qr4,
                 R.drawable.qr5
         };
-        private Integer[] mNameIds = {
-                R.string.empty,
-                R.string.o1,
-                R.string.o2,
-                R.string.o3,
-                R.string.o4,
-                R.string.cuadro
-        };
 
-        private Button entregado;
-        private TextView textViewInfo;
+        /*
+        onCreate
+            - Obtenemos en imageRes el codigo del objeto a mostrar
+            - buscamos las views del botonEntregado y imageView para el QR
+            - Asignamos la imagen de QR que corresponda a la imageView
+            - Creamos listener de onClick para boton entregado, con nuevo intent para finalizar activity
+            - Obtenemos el adaptado NFC en nfcAdapter
+
+         */
+
+
         @Override
         protected void onCreate(Bundle savedInstanceState) 
         {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_entregar_objeto);
-            //textViewInfo = findViewById(R.id.info); //sophia
+
             imageRes = getIntent().getIntExtra("objeto",-1);
+
             entregado = findViewById(R.id.objetoEntregado);
             ImageView qr = findViewById(R.id.imageView_QR);
+
             qr.setImageResource(mQRIds[imageRes]);
 
             entregado.setOnClickListener(new View.OnClickListener() {
@@ -75,24 +86,19 @@
             nfcAdapter = NfcAdapter.getDefaultAdapter(this);
             if(nfcAdapter==null){
                 Toast.makeText(this, R.string.noNFC,Toast.LENGTH_LONG).show();
-                //finish();
-            }else if(!nfcAdapter.isEnabled()){Toast.makeText(this, "NFC NOT Enabled!", Toast.LENGTH_LONG).show();
-                //finish();
-
+            }else if(!nfcAdapter.isEnabled()){
+                Toast.makeText(this, "NFC NOT Enabled!", Toast.LENGTH_LONG).show();
             }
 
-            /*else {
-                mNfcPendingIntent = PendingIntent.getActivity(this, 0,
-                        new Intent(this, this.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-
-                IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
-                IntentFilter[] mWriteTagFilters = new IntentFilter[]{tagDetected};
-                nfcAdapter.enableForegroundDispatch(this, mNfcPendingIntent, mWriteTagFilters, null);
-            }*/
         }
 
+        /*
+        onNewIntent se usa para emitir por nfc el codigo del objeto
+            - Se crea mensaje con createTextMessage
+            - Si se lee el mensaje con writeTag
+                - Se finaliza la activity con intent con RESULT_OK
+         */
         @Override
-        //Jorge
         protected void onNewIntent(Intent intent) {
             // Tag writing mode
             if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
@@ -110,39 +116,9 @@
             }
         }
         /*
-        protected void onResume() {
-            super.onResume();
-            Log.e("Bus card de Sophïa:", String.valueOf(1));
-            Intent intent = getIntent();
-            String action = intent.getAction();
+            createTextMessage: Para crear mensaje NFC a partir de string
 
-            if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-                Toast.makeText(this, "coucou", Toast.LENGTH_SHORT).show();
-                //Toast.makeText(this, "onResume() - ACTION_TAG_DISCOVERED", Toast.LENGTH_SHORT).show();
-                Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                if(tag == null){
-                    textViewInfo.setText("tag == null");
-                }
-                else{
-                    String tagInfo = "";
-                    byte[] tagId = tag.getId();
-                    //tagInfo += "length = " + tagId.length +"\n";
-
-                    for(int i=0; i<tagId.length; i++){
-                        tagInfo += Integer.toHexString(tagId[i] & 0xFF);
-                    }
-                    Log.e("NFC scanned:",tagInfo);
-                    //pour être sûr qu'il n'y ait pas d'espace indésirables
-                    tagInfo.replaceAll(" ","");
-                    //Para hacer cosas con el NFC Tag leido
-                    handleNFCId(tagInfo);
-                    //student card ID : 4d 88 86 29
-                    //bus card Sophïa : 7d34874e
-                }
-            }else{
-                //Toast.makeText(this, "onResume() : " + action, Toast.LENGTH_SHORT).show();
-            }
-        }*/
+         */
 
         public NdefMessage createTextMessage(String content) {
             try {
@@ -169,7 +145,9 @@
             return null;
         }
 
-
+        /*
+            writeTag: Devuelve True o False segun si se ha podido escribir el mensaje por NFC
+         */
         public boolean writeTag(Tag tag, NdefMessage message) {
             if (tag != null) {
                 try {
@@ -194,7 +172,6 @@
                 }
                 catch(Exception e) {
                     return false;
-                    //e.printStackTrace();
                 }
             }
             return false;

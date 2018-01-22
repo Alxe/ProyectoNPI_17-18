@@ -2,10 +2,8 @@ package com.example.practicanpi;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,39 +12,17 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Preconditions;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.Toast;
-import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.IntentFilter.MalformedMimeTypeException;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -56,50 +32,46 @@ import java.util.List;
 import static android.util.Log.d;
 import static android.util.Log.i;
 
+/*
+    SensorActivity: Activity para mostrar objetos encontrados y dar paso a las activitys:
+        - SendObjectActivity para enviar objetos, cuando se pulse encima de uno existente
+        - ScannerUtilityActivity para leer codigos QR o NFC, con su boton para llamar
+        - AccelerometerActivity para dar paso a la activity que muestra funcionamiento del acelerometro
+
+        - Datos: Comentados en el interior de la clase.
+ */
+
 public class SensorActivity extends NpiActivity  implements SensorEventListener {
 
-    private static final String MIME_TEXT_PLAIN = "text/plain";
-
-    private static final String TAG = "SensorActivity";
     //Codigos para request de permisos y results de activitys
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private static final int BARCODE_READER_REQUEST_CODE = 2;
     private static final int SEND_OBJECT_RESULT = 3;
-    private static final int GYROSCOPE_REQUEST = 4;
     private static final int RESULT_NFC = 5;
     //
-    //Sensor manager para control de proximidad y giroscopios
+    //Sensor manager para control de Sensor de proximidad
     private SensorManager sensorManager;
+    private boolean statusProximity; //status del sensor de proximidad
     //
     //IU
-    private Button botonQr; //Boton para leer QR
+    private Button botonQr; //Boton para ir a activity ScannerUtility para leer codigo
     private GridView gridview; //Grid de objetos
-    //private ImageButton buttonPlayStop; //Play/pause
     private SeekBar seekBar; //Barra de audio
-    private Button botonGyro;
+    private Button botonGyro; //Boton para ir a activity AccelerometerActivity para gestion del acelerometro
     //
-    //Objetos encontrados
+
+    //Lista de Objetos encontrados
     private List<Integer> encontradosList;
     //
 
-    //NFC
-    //just a comment
-    private long lastUpdate = -1;
-    //private float x,y,z;
-
-    private NfcAdapter nfcAdapter;
-    //TextView textViewInfo;
-    private float last_x, last_y, last_z;
-    private static final int SHAKE_THRESHOLD = 800;
+    //Adaptador para view de cada objeto del grid
+    private  ImageAdapter adapter;
     //
 
-    private  ImageAdapter adapter;
     //Audio
-    private MediaPlayer mediaPlayer;
-    private Handler handler;
-    private AudioManager audioManager;
-    private boolean statusProximity; //status del sensor de proximidad
-
+    private MediaPlayer mediaPlayer; //Mediaplayer para reproduccion de audio
+    private Handler handler; //Manejador
+    private AudioManager audioManager; //AudioManager
     //
 
     //Fotos de los objetos
@@ -111,6 +83,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             R.drawable.o4,
             R.drawable.cuadro
     };
+    //
     //Nombre de los objetos
     private Integer[] mNameIds = {
             R.string.empty,
@@ -120,7 +93,8 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             R.string.o4,
             R.string.cuadro
     };
-    //Audios de los objetos = -1
+    //
+    //Audios de los objetos = -1 //Ya que no tenemos audio en blanco
     private Integer[] mAudIds = {
             R.raw.a1,
             R.raw.a2,
@@ -128,9 +102,19 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             R.raw.a4,
             R.raw.a5
     };
+    //
 
     DecimalFormat dosdecimales = new DecimalFormat("###.###");
 
+
+    /*
+        onCreate
+         - Obtenemos las views correspondientes por su ID
+         - Creamos los listener para los botones de acelerometro y leer codigo
+         - Crear Listener de pulsacion sobre objeto de la grid
+         - Crear listener de cambio de la barra de audio
+         - Llamamos a iniciarSensores
+     */
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -149,19 +133,15 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
 
         //Audio
-        //buttonPlayStop = findViewById(R.id.playpauseButton);
+
         seekBar = findViewById(R.id.seekBar);
-
-        //buttonPlayStop.setEnabled(false);
         seekBar.setEnabled(false);
-
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
         handler = new Handler();
 
+        //
 
-        this.iniciarSensores();
-
+        //OnitemClicklistener de objetos del grid
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -178,7 +158,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                 }
             }
         });
-
+        //
 
         botonQr.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -197,20 +177,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
         );
 
-        //AUDIO
-        /*
-        buttonPlayStop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(mediaPlayer!= null) {
-                    if (mediaPlayer.isPlaying()) {
-                        pause();
-                    } else {
-                       play();
-                    }
-                }
-            }
-        });*/
 
         seekBar.setOnTouchListener(new View.OnTouchListener() {
             @Override public boolean onTouch(View v, MotionEvent event) {
@@ -218,26 +184,36 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             return false; }
         });
 
-
+        this.iniciarSensores();
 
     }
+
 
     protected void iniciarRecoQR(){
         iniciarQR();
     }
 
+    /*
+    iniciarSensores
+        - Registra el uso del sensor de proximidad
+     */
     protected void iniciarSensores(){
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL);
-        //sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
-        //sensorManager.registerListener((SensorEventListener) this, sensorManager.getDefaultSensor(Sensor.T),SensorManager.SENSOR_DELAY_NORMAL);
     }
-
+    /*
+    iniciarGyro
+         - Crea intent y llama a activity AccelerometerActivity sin esperar result
+     */
     private void iniciarGyro(){
         Intent intent = new Intent(this,AccelerometerActivity.class);
         startActivity(intent);
     }
 
-
+    /*
+        iniciarQR
+             - Comprueba permisos de uso de camara y /
+             Crea intent y llama a activity ScannerUtilityActivity esperando result
+         */
     protected void iniciarQR(){
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -249,6 +225,13 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }
     }
 
+    /*
+            onSensorChanged
+                 - Detecta cambios en el sensor de proximidad
+                    - Si event.values[0] == 0 significa que hay algo cerca del sensor
+                        - Segun el estado de event.values[0] se pone statusProximity a False o True /
+                          Esto se usa para emitir el audio por el auricular o los altavoces
+             */
     @Override
     public void onSensorChanged(SensorEvent event) 
     {
@@ -273,6 +256,20 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
+    /*
+    onActivityResult : Manejar cuando finaliza una activity que lanzamos
+
+        - Si corresponde a algun codigo de activity que hemos lanzado lo interpretamos
+        - Si requestCode == BARCODE_READER_REQUEST_CODE
+            - si resultCode == RESULT_OK es un QR, por lo que decodificamos el mensaje /
+          y añadimos el objeto con  añadirObjeto(res);
+            - si resultCode == RESULT_NFC es un nfc y llamamos a handleNFCId para analizar el mensaje
+            - si resultCode == RESULT_CANCELED algo fallo leyendo el codigo
+
+        - si requestCode == SEND_OBJECT_RESULT y resultCode == RESULT_OK: /
+            Se envio el objeto correctamente lo eliminamos de la lista de objetos y actualizamos la view
+
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -315,6 +312,11 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     protected void onResume() {
         super.onResume();
     }
+
+    /*
+        handleNFCId: Interpreta los codigos NFC recibidos
+         - Si el codigo recibido existe se añade objeto correspondiente
+     */
     private void handleNFCId(String myTag){
         //This function associates an 'int' to an 'NFC tag'
         int res = -1;
@@ -340,13 +342,11 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         //add objet to list
         añadirObjeto(res);
     }
-    public static float Round(float Rval, int Rpl) {
-        float p = (float)Math.pow(10,Rpl);
-        Rval = Rval * p;
-        float tmp = Math.round(Rval);
-        return (float)tmp/p;
-    }
 
+    /*
+    onDestroy , onPause
+     - Se para y libera el reproductor de audio
+     */
     @Override protected void onDestroy() {
         if(mediaPlayer!=null) {
             mediaPlayer.stop();
@@ -358,23 +358,28 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     @Override protected void onPause() {
         super.onPause();
-        /*
+
         if(mediaPlayer!=null) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
-        }*/
+        }
     }
 
+    /*
+        añadirObjeto : Añade objeto a la lista de encontrados y carga audio correspondiente
+            - Comprobar que el objeto existe
+            - añadirlo a la lista y actualizar el view
+            - Cargar audio del objeto y reproducirlo
+
+     */
     private void añadirObjeto(int res){
         if(res <= mNameIds.length && res > 0 ){
             if (!encontradosList.contains(res)) {
                 encontradosList.add(res);
                 adapter.update(encontradosList);
-                //RES = CODIGO QR LEIDO
-                //moveTo(res);
                 Toast.makeText(getApplicationContext(), getResources().getString(R.string.Hasencontrado) + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
-                            }else {
+            }else {
                 Toast.makeText(getApplicationContext(), getString(R.string.yatienes) + getResources().getString(mNameIds[res]), Toast.LENGTH_SHORT).show();
             }
             loadAudio(mAudIds[res-1]);
@@ -385,10 +390,12 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     }
 
+    /*
+        play : Comenzar la reproduccion del audio
+     */
     private void play(){
         if(mediaPlayer!=null){
             if(!mediaPlayer.isPlaying()){
-                //buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_pause);
                 mediaPlayer.start();
                 seekBar.setEnabled(true);
                 startPlayProgressUpdater();
@@ -396,8 +403,10 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }
     }
 
+    /*
+           pause : Pausar la reproduccion del audio
+        */
     private void pause(){
-        //buttonPlayStop.setBackgroundResource(android.R.drawable.ic_media_play);
         if (mediaPlayer!=null){
             if (mediaPlayer.isPlaying()){
                 mediaPlayer.pause();
@@ -405,13 +414,19 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }
 
     }
+
+    /*
+           loadAudio : Cargar Audio y asignar tamaño de seekBar
+    */
     private void loadAudio(int resource){
         mediaPlayer = MediaPlayer.create(getBaseContext(),resource);
         seekBar.setMax(mediaPlayer.getDuration());
         audioManager.setMode(AudioManager.STREAM_MUSIC);
-        //play();
     }
-
+    /*
+       seekChange : Cambio de la posicion del seekbar por el usuario
+        - Mover mediaPlayer hasta posicion del seekbar actual
+   */
     private void seekChange(View v){
         if(mediaPlayer.isPlaying()){
             SeekBar sb = (SeekBar)v;
@@ -419,6 +434,12 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }
     }
 
+    /*
+        startPlayProgressUpdater : Actualización del seekbar continua y comprobacion de statusProximity
+            - Asignamos progreso del audio a la seekbar
+            - Activar o desactivar altavoz del telefono
+            - Cuando termina la reproduccion para audio y deshabilita la seekbar
+     */
     public void startPlayProgressUpdater() {
         if (mediaPlayer != null) {
             seekBar.setProgress(mediaPlayer.getCurrentPosition());
@@ -432,7 +453,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                 handler.postDelayed(notification, 100);
             } else {
                 pause();
-                // buttonPlayStop.setEnabled(false);
                 seekBar.setEnabled(false);
             }
         }

@@ -33,4 +33,6 @@
     <string name="noNFC">NFC NOT supported on this device!</string>
     <string name="buttonGyro">Photo</string>
     <string name="earpiece">Playing by earpiece</string>
+    <string name="acelerometroSubir">Subiendo</string>
+    <string name="acelerometroBajar">Bajando</string>
 </resources>

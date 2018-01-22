@@ -23,13 +23,35 @@ import me.dm7.barcodescanner.zbar.ZBarScannerView;
  * Created by soler on 21/12/2017.
  */
 
+/*
+    ScannerUtilityActivity : Esta activity se encarga de leer los codigos tanto QR como NFC.
+        - Para leer codigos QR se ha hecho uso de la libreria: https://github.com/dm77/barcodescanner /
+          Que nos proporciona los metodos y layouts necesarios.
+
+        - Para los codigos NFC usamos ejemplo encontrado en https://android.jlelse.eu/create-a-nfc-reader-application-for-android-74cf24f38a6f
+
+        - Los dos recursos usados, QR y NFC, han sido adaptados y fusinados para nuestro proposito.
+
+        Datos:
+            - RESULT_NFC = 5 : Codigo para identificar que ha sido leido un NFC este codigo se usa /
+            en sensorActivity para tratar los datos de manera diferente a un QR, que devuelve RESULT_OK
+            - mScannerView: View del lector de QR
+            - mNfcAdapter: Adaptador NFC
+            - mPendingIntent : Intent para NFC
+ */
+
 public class ScannerUtilityActivity extends Activity implements ZBarScannerView.ResultHandler {
     private static final int RESULT_NFC = 5;
     private ZBarScannerView mScannerView;
     private NfcAdapter mNfcAdapter;
     private PendingIntent mPendingIntent;
 
-
+    /*
+        onCreate
+            - En mNfcAdapter recogemos el adaptador NFC y comprobamos que no sea nulo
+            - Creamos un PendingIntent en mPendingIntent para el NFC
+            - Intentamos Leer NFC con handleItent
+     */
     @Override
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -56,23 +78,38 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
 
     }
 
+    /*
+       onResume
+           - habilitamos foreground del adaptador nfc
+           - .. Codigo de la libreria QR
+     */
     @Override
     public void onResume() {
         super.onResume();
         if(mNfcAdapter!=null)
             mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, null, null);
-        mScannerView.setResultHandler(this); // Register ourselves as a handler for scan results.
-        mScannerView.startCamera();          // Start camera on resume
+        mScannerView.setResultHandler(this); // Registrar esta clase como manejador de los result
+        mScannerView.startCamera();          // Lanzar camara
     }
 
+    /*
+       onPause
+           - deshabilitamos foreground del adaptador nfc
+           - .. Codigo de la libreria QR
+     */
     @Override
     public void onPause() {
         super.onPause();
         if (mNfcAdapter != null) {
             mNfcAdapter.disableForegroundDispatch(this);
         }
-        mScannerView.stopCamera();           // Stop camera on pause
+        mScannerView.stopCamera();           // Paramos camara
     }
+    /*
+       handleResult : Usado cuando detectamos un QR
+           - Creamos un nuevo intent con extra de result con el codigo obtenido
+           - Asignamos el result RESULT_OK y finalizamos
+     */
 
     @Override
     public void handleResult(Result rawResult) {
@@ -88,9 +125,12 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
         //mScannerView.resumeCameraPreview(this);
     }
 
+    /*
+      onNewIntent : Para manejar nuevos intent de esta activity
+          - Llamamos a handleIntent
+    */
     @Override
     protected void onNewIntent(Intent intent) {
-        //Log.e("inf","On fait un intent");
         setIntent(intent);
         try {
             handleIntent(intent);
@@ -98,7 +138,13 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
             e.printStackTrace();
         }
     }
-
+    /*
+          handleIntent : Manejador de los intent
+              - comprobamos la action del intent: si es igual que NfcAdapter.ACTION_TAG_DISCOVERED continuamos
+              - Obtenemos los datos leidos por el nfc
+              - Decodificamos el mensaje
+              - Si se decodifico se crea nuevo intent se asignan los resultados en result y se finaliza la activity
+    */
     private void handleIntent(Intent intent) throws UnsupportedEncodingException {
         String action = intent.getAction();
         if (action == null){
@@ -109,7 +155,7 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
         }
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
 
-            String type = intent.getType();
+            String type = intent.getType(); //Tipo de etiqueta
             if (type==null){
                 Log.e("TYPE_TAG:","Empty");
                 Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
@@ -119,12 +165,15 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
                     byte[] empty = new byte[0];
                     byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
                     Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                    tag.getId();
-                    byte[] payload = dumpTagData(tag).getBytes();
+
+                    byte[] payload = dumpTagData(tag).getBytes(); //Limpiar datos leidos del tag
+
                     NdefRecord record = new NdefRecord(NdefRecord.TNF_UNKNOWN, empty, id, payload);
                     NdefMessage msg = new NdefMessage(new NdefRecord[] {record});
                     msgs = new NdefMessage[] {msg};
+
                     Log.e("NFC_ID:", id.toString());
+                    //Intentamos decodificar los datos leidos
                     String text;
                     try {
 
@@ -136,7 +185,10 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
                     }catch (UnsupportedEncodingException e){
                         throw new IllegalArgumentException(e);
                     }
-                    Log.e("TEXTO:",text + " ");
+
+                    Log.e("TEXTO:",text + " "); //En text nos queda la cadena de texto leida
+
+                    //Terminamos activity
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("result",text);
                     setResult(RESULT_NFC, returnIntent);
@@ -150,6 +202,10 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
             }
         }
     }
+    /*
+         toHex : convertir a Hexadecimal
+             - Funcion para convertir datos a hexadecimal usado por dumpTagData
+   */
     private String toHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (int i = bytes.length - 1; i >= 0; --i) {
@@ -164,6 +220,10 @@ public class ScannerUtilityActivity extends Activity implements ZBarScannerView.
         return sb.toString();
     }
 
+    /*
+         dumpTagData : Obtiene los datos en hexadecimal del TAG
+             - Los devuelve en formato String
+   */
     private String dumpTagData(Tag tag) {
         StringBuilder sb = new StringBuilder();
         byte[] id = tag.getId();

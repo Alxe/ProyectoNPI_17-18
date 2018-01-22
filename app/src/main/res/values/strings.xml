@@ -51,5 +51,7 @@
     <string name="noNFC">Tu dispositivo no tiene soporte para nfc!</string>
     <string name="buttonGyro">Foto</string>
     <string name="earpiece">Reproduciendo por auricular</string>
+    <string name="acelerometroSubir">Subiendo</string>
+    <string name="acelerometroBajar">Bajando</string>
     <!-- End Sensores -->
 </resources>
