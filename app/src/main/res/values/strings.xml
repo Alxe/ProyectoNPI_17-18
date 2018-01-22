@@ -30,7 +30,7 @@
     <string name="no_camera_permission">La aplicación necesita permisos de cámara</string>
     <string name="low_storage_error">No hay espacio en memoria para descargar el detector QR</string>
     <string name="lorem_ipsum" translatable="false">Lorem ipsum</string>
-    <string name="leer_qr">Leer QR</string>
+    <string name="leer_qr">Leer Codigo</string>
 
     <string name="o1">Jarron</string>
     <string name="o2">Lanza</string>

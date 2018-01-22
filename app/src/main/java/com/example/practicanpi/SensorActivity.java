@@ -2,8 +2,10 @@ package com.example.practicanpi;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -13,10 +15,15 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.nfc.tech.MifareClassic;
+import android.nfc.tech.MifareUltralight;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Preconditions;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +32,21 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.Toast;
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.IntentFilter.MalformedMimeTypeException;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -36,14 +58,15 @@ import static android.util.Log.i;
 
 public class SensorActivity extends NpiActivity  implements SensorEventListener {
 
+    private static final String MIME_TEXT_PLAIN = "text/plain";
 
     private static final String TAG = "SensorActivity";
-
     //Codigos para request de permisos y results de activitys
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
     private static final int BARCODE_READER_REQUEST_CODE = 2;
     private static final int SEND_OBJECT_RESULT = 3;
     private static final int GYROSCOPE_REQUEST = 4;
+    private static final int RESULT_NFC = 5;
     //
     //Sensor manager para control de proximidad y giroscopios
     private SensorManager sensorManager;
@@ -110,10 +133,10 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sensor);
-
         i("info","Empezamos bien");
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -195,11 +218,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             return false; }
         });
 
-        //NFC
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if(nfcAdapter==null){
-            Toast.makeText(this,R.string.noNFC,Toast.LENGTH_LONG).show();
-        }
+
 
     }
 
@@ -257,9 +276,11 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == BARCODE_READER_REQUEST_CODE){
+            Log.e("Request code:",Integer.toString(resultCode));
+
             if(resultCode == RESULT_OK){
                 String result=data.getStringExtra("result");
-                Log.e("qr scanned:",result);
+                Log.e("code scanned:",result);
                 int res;
                 try
                 {
@@ -271,6 +292,8 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
                 }
                 añadirObjeto(res);
 
+            }else if(resultCode == RESULT_NFC){
+                handleNFCId(data.getStringExtra("result"));
             }
             if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), com.example.practicanpi.R.string.qrfallido, Toast.LENGTH_SHORT).show();
@@ -290,34 +313,6 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     @Override
     protected void onResume() {
         super.onResume();
-        i("info"," entering on resume");
-        if (nfcAdapter!=null) {
-            Intent intent = getIntent();
-            String action = intent.getAction();
-            if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-                i("info"," NFC tag discovered");
-                //Toast.makeText(this,"onResume() - ACTION_TAG_DISCOVERED",Toast.LENGTH_SHORT).show();
-                Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                if (tag == null) {
-                    i("info_null","NFC Tag null");
-                } else {
-                    String tagInfo = "";
-                    byte[] tagId = tag.getId();
-                    for (int i = 0; i < tagId.length; i++) {
-                        tagInfo += Integer.toHexString(tagId[i] & 0xFF);
-                    }
-
-                    tagInfo.replaceAll(" ",""); //no blanks
-                    Log.e(TAG, "NFC scanned " + tagInfo );
-                    //associate int to NFC Tag then add object to the list
-                    handleNFCId(tagInfo);
-                }
-            } else {
-                Toast.makeText(this,
-                        "onResume() : " + action,
-                        Toast.LENGTH_SHORT).show();
-            }
-        }
     }
     private void handleNFCId(String myTag){
         //This function associates an 'int' to an 'NFC tag'
@@ -327,11 +322,20 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             res =1; //Lanza
             //Toast.makeText(this, "Estas en la primera sala, bienvenido", Toast.LENGTH_SHORT).show();
         }
-        if(myTag.equals( "7d34874e")){
+        else if(myTag.equals( "7d34874e")){
             Log.e("Bus card de Sophïa:",myTag);
             res = 2; //jarron
             //Toast.makeText(this, "Estas en la segunda sala, bienvenido", Toast.LENGTH_SHORT).show();
+        }else if (myTag.equals( "1e 30 05 0c 91 13 a7"))
+        {
+            Log.e("Credit Card Jorge:",myTag);
+            res = 3;
         }
+        else{
+            Log.e("NFC READ",myTag);
+            Toast.makeText(this,getResources().getText(R.string.valornovalido), Toast.LENGTH_SHORT).show();
+        }
+
         //add objet to list
         añadirObjeto(res);
     }
@@ -343,21 +347,22 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     }
 
     @Override protected void onDestroy() {
-        super.onDestroy();
         if(mediaPlayer!=null) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        super.onDestroy();
     }
 
     @Override protected void onPause() {
         super.onPause();
+        /*
         if(mediaPlayer!=null) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
-        }
+        }*/
     }
 
     private void añadirObjeto(int res){
@@ -376,6 +381,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
         }else{
             Toast.makeText(getApplicationContext(),com.example.practicanpi.R.string.valornovalido, Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void play(){
@@ -430,6 +436,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             }
         }
     }
+
 
 }
 
