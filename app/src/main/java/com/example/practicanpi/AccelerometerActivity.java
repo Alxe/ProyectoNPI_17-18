@@ -103,13 +103,13 @@ public class AccelerometerActivity extends NpiActivity implements SensorEventLis
                     float gforce = ymove / SensorManager.GRAVITY_EARTH;
 
                     if (gforce > 0.3) { //Inclinacion hacia arriba
-                        scroll.smoothScrollBy(0, 100);
+                        scroll.scrollBy(0, 750);
                         Log.e("Action","Subir");
                         //Toast.makeText(this, R.string.acelerometroSubir, Toast.LENGTH_SHORT).show();
 
 
                     } else if (gforce < -0.3) { //Inclinacion hacia abajo
-                        scroll.smoothScrollBy(0, -100);
+                        scroll.scrollBy(0, -750);
                         Log.e("Action","Bajar");
                         //Toast.makeText(this, R.string.acelerometroBajar, Toast.LENGTH_SHORT).show();
 

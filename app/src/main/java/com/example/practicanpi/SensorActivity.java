@@ -310,7 +310,11 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
 
     @Override
     protected void onResume() {
+
         super.onResume();
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY),SensorManager.SENSOR_DELAY_NORMAL);
+
+
     }
 
     /*
@@ -353,11 +357,15 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             mediaPlayer.release();
             mediaPlayer = null;
         }
+
+        sensorManager.unregisterListener(this);
+
         super.onDestroy();
     }
 
     @Override protected void onPause() {
         super.onPause();
+        sensorManager.unregisterListener(this);
 
         if(mediaPlayer!=null) {
             mediaPlayer.stop();
