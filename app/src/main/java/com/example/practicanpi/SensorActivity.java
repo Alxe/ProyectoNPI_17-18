@@ -329,7 +329,7 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
             res =1; //Jarron
             //Toast.makeText(this, "Estas en la primera sala, bienvenido", Toast.LENGTH_SHORT).show();
         }
-        else if(myTag.equals( "7d 34 87 4e")){
+        else if(myTag.equals( "29 86 88 4d")){
             Log.e("Student card Sophïa:",myTag);
             res = 2; //Lanza
             //Toast.makeText(this, "Estas en la segunda sala, bienvenido", Toast.LENGTH_SHORT).show();
