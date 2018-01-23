@@ -320,14 +320,14 @@ public class SensorActivity extends NpiActivity  implements SensorEventListener 
     private void handleNFCId(String myTag){
         //This function associates an 'int' to an 'NFC tag'
         int res = -1;
-        if(myTag.equals( "4d888629")){
-            Log.e("Student card:",myTag);
-            res =1; //Lanza
+        if(myTag.equals( "4e 87 34 7d")){
+            Log.e("Bus card de Sophïa:",myTag);
+            res =1; //Jarron
             //Toast.makeText(this, "Estas en la primera sala, bienvenido", Toast.LENGTH_SHORT).show();
         }
-        else if(myTag.equals( "7d34874e")){
-            Log.e("Bus card de Sophïa:",myTag);
-            res = 2; //jarron
+        else if(myTag.equals( "7d 34 87 4e")){
+            Log.e("Student card Sophïa:",myTag);
+            res = 2; //Lanza
             //Toast.makeText(this, "Estas en la segunda sala, bienvenido", Toast.LENGTH_SHORT).show();
         }else if (myTag.equals( "1e 30 05 0c 91 13 a7"))
         {
