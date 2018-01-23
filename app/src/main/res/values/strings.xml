@@ -13,7 +13,7 @@
     <string name="dialog_input_fragment_item0">¡Hola!</string>
     <string name="dialog_input_fragment_item1">¿Cómo estás?</string>
     <string name="dialog_input_fragment_item2">¿A qué te dedicas?</string>
-    <string name="dialog_input_fragment_item3">¿A dónde vives?</string>
+    <string name="dialog_input_fragment_item3">¿Dónde vives?</string>
     <string name="dialog_input_fragment_item4">¿Qué puedes contarme?</string>
     <string name="need_mic_permission">Esta aplicación necesita permisos de micrófono</string>
 
